@@ -132,7 +132,7 @@ export default function BookReader() {
     setCurrentVolume(volIdx);
     setCurrentChapter(chapIdx);
     
-    const cacheKey = \`\${volIdx}-\${chapIdx}\`;
+    const cacheKey = `${volIdx}-${chapIdx}`;
     if (chapterCacheRef.current.has(cacheKey)) {
       setChapterContent(chapterCacheRef.current.get(cacheKey) || null);
       window.scrollTo(0, 0);
@@ -141,7 +141,7 @@ export default function BookReader() {
     
     try {
       setChapterLoading(true);
-      const res = await fetch(\`/api/ebook/catalog/\${slug}/chapter/\${volIdx}/\${chapIdx}\`);
+      const res = await fetch(`/api/ebook/catalog/${slug}/chapter/${volIdx}/${chapIdx}`);
       if (!res.ok) throw new Error("Failed to load chapter content");
       const data = await res.json();
       
@@ -280,7 +280,7 @@ export default function BookReader() {
       });
 
       if (!response.ok) {
-        throw new Error(\`Failed to generate audio: \${response.status}\`);
+        throw new Error(`Failed to generate audio: ${response.status}`);
       }
 
       const arrayBuffer = await response.arrayBuffer();
@@ -542,17 +542,17 @@ export default function BookReader() {
                               loadChapter(vIdx, cIdx);
                               setSidebarOpen(false);
                             }}
-                            className={\`w-full text-left px-3 py-2.5 rounded-lg transition-all flex flex-col \${
+                            className={`w-full text-left px-3 py-2.5 rounded-lg transition-all flex flex-col ${
                               isCurrent 
                                 ? "bg-cyan-500/10 border border-cyan-500/20" 
                                 : "hover:bg-white/5 border border-transparent"
-                            }\`}
+                            }`}
                           >
-                            <span className={\`text-xs tracking-wider uppercase mb-0.5 \${isCurrent ? "text-cyan-400 font-bold" : "text-slate-500"}\`}>
+                            <span className={`text-xs tracking-wider uppercase mb-0.5 ${isCurrent ? "text-cyan-400 font-bold" : "text-slate-500"}`}>
                               {chap.title}
                             </span>
                             {chap.partTitle && (
-                              <span className={\`text-sm \${isCurrent ? "text-white" : "text-slate-300"}\`}>
+                              <span className={`text-sm ${isCurrent ? "text-white" : "text-slate-300"}`}>
                                 {chap.partTitle}
                               </span>
                             )}
@@ -586,7 +586,7 @@ export default function BookReader() {
           </div>
         ) : chapterContent ? (
           <motion.div
-            key={\`\${currentVolume}-\${currentChapter}\`}
+            key={`${currentVolume}-${currentChapter}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -626,7 +626,7 @@ export default function BookReader() {
             variant="ghost" 
             onClick={goPrev}
             disabled={!hasPrev || chapterLoading}
-            className={\`\${!hasPrev ? 'opacity-0 pointer-events-none' : 'text-slate-400 hover:text-white hover:bg-white/5'}\`}
+            className={`${!hasPrev ? 'opacity-0 pointer-events-none' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
           >
             <ChevronLeft className="w-4 h-4 mr-2" /> Previous
           </Button>
@@ -635,7 +635,7 @@ export default function BookReader() {
             variant="ghost" 
             onClick={goNext}
             disabled={!hasNext || chapterLoading}
-            className={\`\${!hasNext ? 'opacity-0 pointer-events-none' : 'text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10'}\`}
+            className={`${!hasNext ? 'opacity-0 pointer-events-none' : 'text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10'}`}
           >
             Next <ChevronRight className="w-4 h-4 ml-2" />
           </Button>
@@ -644,3 +644,4 @@ export default function BookReader() {
     </div>
   );
 }
+
