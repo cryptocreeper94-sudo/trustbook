@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { KenBurnsHero } from "@/components/ken-burns-hero";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import {
@@ -18,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { GlassCard } from "@/components/glass-card";
 import { BOOK_CATEGORIES } from "@shared/schema";
 
-const heroImg = "/images/trust-book-hero.jpg";
+// Ken Burns slideshow replaces static hero
 const featuredImg = "/images/trust-book-featured.jpg";
 const readerImg = "/images/trust-book-reader.jpg";
 const audioImg = "/images/trust-book-audio.jpg";
@@ -403,10 +404,10 @@ export default function TrustBook() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
-      <div className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center justify-center overflow-hidden">
+      <KenBurnsHero>
         <div className="absolute inset-0">
           <img src={heroImg} alt="Trust Book Library" className="w-full h-full object-cover opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/80 to-slate-950" />
+          
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-purple-500/5" />
         </div>
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -486,7 +487,7 @@ export default function TrustBook() {
               <GlassCard glow>
                 <div className="relative h-full min-h-[400px] overflow-hidden rounded-xl">
                   <img src={featuredImg} alt="Through The Veil" className="absolute inset-0 w-full h-full object-cover opacity-40" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+                  
                   <div className="relative z-10 p-6 sm:p-8 flex flex-col justify-end h-full">
                     <div className="flex gap-2 mb-3">
                       <Badge className="bg-cyan-500/20 border-cyan-500/30 text-cyan-400 text-xs"><Sparkles className="w-3 h-3 mr-1" /> Launch Title</Badge>
@@ -534,7 +535,9 @@ export default function TrustBook() {
         </div>
       </section>
 
-      <section id="section-browse" className="py-16 relative">
+      </KenBurnsHero>
+
+        <section id="section-browse" className="py-16 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/[0.02] to-transparent" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
