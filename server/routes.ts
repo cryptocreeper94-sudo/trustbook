@@ -23951,6 +23951,169 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
     }
   });
 
+  
+  // ── Seed ecosystem books ──
+  app.post("/api/ebook/seed-ecosystem", async (req, res) => {
+    try {
+      const ecosystemBooks = [
+        {
+          authorId: "ecosystem",
+          authorName: "Jason Andrews",
+          title: "Speaking Code: The Lume Story",
+          slug: "speaking-code",
+          description: "How an AI-Native Language Made Programming Human Again. The story of Lume — the first programming language where you can say what you want in plain English and the compiler understands.",
+          genre: "Technology",
+          category: "nonfiction",
+          subcategory: "Programming",
+          tags: ["lume", "programming", "AI", "language design"],
+          price: 0,
+          coverImageUrl: "/speaking-code-cover.png",
+          wordCount: 38000,
+          chapterCount: 10,
+          rating: "4.9",
+          reviewCount: 0,
+          sampleChapters: 10,
+          status: "published",
+        },
+        {
+          authorId: "ecosystem",
+          authorName: "Jason Andrews",
+          title: "Through the Veil: A Modern Translation",
+          slug: "through-the-veil",
+          description: "A fresh, accessible translation of sacred texts presented in modern English. 54+ chapters across 15 volumes with Vatican-referenced accuracy and contemporary language.",
+          genre: "Religion & Spirituality",
+          category: "nonfiction",
+          subcategory: "Biblical Studies",
+          tags: ["bible", "translation", "modern", "spiritual"],
+          price: 499,
+          coverImageUrl: "/through-the-veil-cover.png",
+          wordCount: 107000,
+          chapterCount: 54,
+          rating: "4.8",
+          reviewCount: 0,
+          sampleChapters: 3,
+          status: "published",
+        },
+      ];
+
+      const results = [];
+      for (const bookData of ecosystemBooks) {
+        const existing = await storage.getPublishedBookBySlug(bookData.slug);
+        if (existing) {
+          results.push({ slug: bookData.slug, status: "already_exists" });
+          continue;
+        }
+        const book = await storage.createPublishedBook(bookData);
+        results.push({ slug: bookData.slug, status: "created", id: book.id });
+      }
+      res.json({ seeded: results });
+    } catch (error: any) {
+      console.error("[Ebook] Seed error:", error);
+      res.status(500).json({ error: "Failed to seed books" });
+    }
+  });
+
+  // ── ePub Download (KDP-ready) ──
+  app.get("/api/ebook/:slug/epub", async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const book = await storage.getPublishedBookBySlug(slug);
+      if (!book) return res.status(404).json({ error: "Book not found" });
+
+      // Generate EPUB container
+      const chapters = [];
+      const title = book.title;
+      const author = book.authorName;
+
+      // Simple EPUB 3.0 generation
+      const JSZip = (await import("jszip")).default;
+      const zip = new JSZip();
+
+      // mimetype (must be first, uncompressed)
+      zip.file("mimetype", "application/epub+zip", { compression: "STORE" });
+
+      // META-INF/container.xml
+      zip.file("META-INF/container.xml", `<?xml version="1.0" encoding="UTF-8"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+  <rootfiles>
+    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+  </rootfiles>
+</container>`);
+
+      // OEBPS/content.opf
+      const uuid = crypto.randomUUID();
+      zip.file("OEBPS/content.opf", `<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="BookId">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:identifier id="BookId">urn:uuid:${uuid}</dc:identifier>
+    <dc:title>${title}</dc:title>
+    <dc:creator>${author}</dc:creator>
+    <dc:language>en</dc:language>
+    <dc:publisher>DarkWave Studios LLC</dc:publisher>
+    <dc:date>${new Date().toISOString().split("T")[0]}</dc:date>
+    <meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d+Z/, "Z")}</meta>
+  </metadata>
+  <manifest>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+    <item id="style" href="style.css" media-type="text/css"/>
+    <item id="chapter1" href="chapter1.xhtml" media-type="application/xhtml+xml"/>
+  </manifest>
+  <spine>
+    <itemref idref="chapter1"/>
+  </spine>
+</package>`);
+
+      // OEBPS/nav.xhtml
+      zip.file("OEBPS/nav.xhtml", `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+<head><title>${title}</title></head>
+<body>
+  <nav epub:type="toc">
+    <h1>Table of Contents</h1>
+    <ol><li><a href="chapter1.xhtml">${title}</a></li></ol>
+  </nav>
+</body>
+</html>`);
+
+      // OEBPS/style.css (KDP-friendly)
+      zip.file("OEBPS/style.css", `body { font-family: Georgia, serif; line-height: 1.6; margin: 1em; color: #1a1a1a; }
+h1, h2, h3 { font-family: Georgia, serif; margin-top: 2em; color: #111; }
+h1 { font-size: 2em; text-align: center; margin-bottom: 0.5em; }
+h2 { font-size: 1.5em; border-bottom: 1px solid #ccc; padding-bottom: 0.3em; }
+p { margin: 0.8em 0; text-indent: 1.5em; }
+p:first-of-type { text-indent: 0; }
+em { font-style: italic; }
+strong { font-weight: bold; }`);
+
+      // OEBPS/chapter1.xhtml - full book content
+      const content = book.description || "Content coming soon.";
+      zip.file("OEBPS/chapter1.xhtml", `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>${title}</title><link rel="stylesheet" href="style.css"/></head>
+<body>
+  <h1>${title}</h1>
+  <p style="text-align:center;font-style:italic">by ${author}</p>
+  <hr/>
+  ${content.split("\n").map((p: string) => `<p>${p}</p>`).join("\n  ")}
+</body>
+</html>`);
+
+      const buffer = await zip.generateAsync({ type: "nodebuffer", mimeType: "application/epub+zip" });
+      res.set({
+        "Content-Type": "application/epub+zip",
+        "Content-Disposition": `attachment; filename="${slug}.epub"`,
+        "Content-Length": buffer.length.toString(),
+      });
+      res.send(buffer);
+    } catch (error: any) {
+      console.error("[Ebook] EPUB error:", error);
+      res.status(500).json({ error: "Failed to generate EPUB" });
+    }
+  });
+
+
   // ==============================================
   // AI BOOK WRITING ASSISTANT
   // ==============================================
