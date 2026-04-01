@@ -24114,6 +24114,104 @@ strong { font-weight: bold; }`);
   });
 
 
+  
+  // ==============================================
+  // ANIMATED CHAPTER PURCHASES
+  // ==============================================
+
+  // Get pricing tiers
+  app.get("/api/animation/pricing", (req, res) => {
+    const { ANIMATION_PRICING } = require("@shared/schema");
+    res.json({
+      tiers: {
+        standard: {
+          ...ANIMATION_PRICING.standard,
+          features: [
+            "AI narration (standard voice)",
+            "Auto-generated scene backgrounds",
+            "Basic camera movements",
+            "2-5 min per chapter",
+          ],
+        },
+        premium: {
+          ...ANIMATION_PRICING.premium,
+          features: [
+            "HD AI narration (6 voice options)",
+            "Cinematic scene environments",
+            "Dynamic camera and lighting",
+            "Character lip-sync",
+            "Custom music mood",
+            "3-8 min per chapter",
+          ],
+        },
+      },
+      options: ["perChapter", "perBook", "monthly"],
+    });
+  });
+
+  // Purchase animated chapter(s)
+  app.post("/api/animation/purchase", async (req, res) => {
+    try {
+      const { userId, bookId, chapterId, purchaseType, tier } = req.body;
+      if (!userId || !bookId || !purchaseType || !tier) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const { ANIMATION_PRICING } = require("@shared/schema");
+      const pricing = ANIMATION_PRICING[tier as keyof typeof ANIMATION_PRICING];
+      if (!pricing) return res.status(400).json({ error: "Invalid tier" });
+
+      let amount: number;
+      switch (purchaseType) {
+        case "chapter": amount = pricing.perChapter; break;
+        case "book": amount = pricing.perBook; break;
+        case "monthly": amount = pricing.monthly; break;
+        default: return res.status(400).json({ error: "Invalid purchase type" });
+      }
+
+      // Create purchase record
+      const [purchase] = await db.insert(animatedChapterPurchases).values({
+        userId,
+        bookId,
+        chapterId: chapterId || null,
+        purchaseType,
+        tier,
+        amount,
+        status: "pending",
+        animationStatus: "pending",
+      }).returning();
+
+      // In production, create Stripe checkout session here
+      // For now, return the purchase with redirect URL to TrustGen
+      const trustgenUrl = `https://trustgen.tlid.io/studio?mode=story&book=${bookId}&chapter=${chapterId || "all"}&purchase=${purchase.id}&tier=${tier}`;
+
+      res.json({
+        purchase,
+        checkoutUrl: trustgenUrl, // Would be Stripe URL in production
+        amount: amount / 100,
+        currency: "USD",
+      });
+    } catch (error: any) {
+      console.error("[Animation] Purchase error:", error);
+      res.status(500).json({ error: "Failed to process purchase" });
+    }
+  });
+
+  // Check animation status
+  app.get("/api/animation/status/:purchaseId", async (req, res) => {
+    try {
+      const { purchaseId } = req.params;
+      const [purchase] = await db
+        .select()
+        .from(animatedChapterPurchases)
+        .where(eq(animatedChapterPurchases.id, parseInt(purchaseId)));
+      if (!purchase) return res.status(404).json({ error: "Purchase not found" });
+      res.json(purchase);
+    } catch (error: any) {
+      res.status(500).json({ error: "Failed to get status" });
+    }
+  });
+
   // ==============================================
   // AI BOOK WRITING ASSISTANT
   // ==============================================

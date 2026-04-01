@@ -9202,3 +9202,39 @@ export const investorInvitePins = pgTable("investor_invite_pins", {
 export const insertInvestorInvitePinSchema = createInsertSchema(investorInvitePins).omit({ id: true, createdAt: true });
 export type InsertInvestorInvitePin = z.infer<typeof insertInvestorInvitePinSchema>;
 export type InvestorInvitePin = typeof investorInvitePins.$inferSelect;
+
+
+// ── Animated Chapter Purchases ──
+export const animatedChapterPurchases = pgTable("animated_chapter_purchases", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  bookId: text("book_id").notNull(),
+  chapterId: text("chapter_id"),
+  purchaseType: text("purchase_type").notNull(), // 'chapter' | 'book' | 'subscription'
+  tier: text("tier").notNull().default("standard"), // 'standard' | 'premium'
+  stripeSessionId: text("stripe_session_id"),
+  amount: integer("amount").notNull(), // cents
+  status: text("status").notNull().default("completed"),
+  animationStatus: text("animation_status").default("pending"), // 'pending' | 'processing' | 'complete' | 'failed'
+  animationUrl: text("animation_url"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertAnimatedPurchaseSchema = createInsertSchema(animatedChapterPurchases).omit({ id: true, createdAt: true });
+export type AnimatedPurchase = typeof animatedChapterPurchases.$inferSelect;
+
+// ── Animation Pricing Tiers ──
+export const ANIMATION_PRICING = {
+  standard: {
+    perChapter: 399,   // $3.99
+    perBook: 1999,     // $19.99
+    monthly: 2499,     // $24.99/mo — 5 books
+    description: "Standard quality (TTS-1, basic scenes)",
+  },
+  premium: {
+    perChapter: 699,   // $6.99
+    perBook: 3499,     // $34.99
+    monthly: 4999,     // $49.99/mo — unlimited
+    description: "Premium HD (TTS-1-HD, cinematic scenes, custom environments)",
+  },
+} as const;

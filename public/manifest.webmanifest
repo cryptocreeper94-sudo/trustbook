@@ -1,0 +1,44 @@
+{
+  "name": "TrustBook — Premium Digital Library",
+  "short_name": "TrustBook",
+  "description": "Premium digital library with HD voice reading, animated chapters, and blockchain-verified publishing.",
+  "start_url": "/trust-book",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#06b6d4",
+  "categories": ["books", "education", "entertainment"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Browse Catalog",
+      "short_name": "Browse",
+      "url": "/trust-book#section-browse",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Library",
+      "short_name": "Library",
+      "url": "/trust-book#section-library"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
