@@ -405,19 +405,6 @@ export default function TrustBook() {
   return (
     <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
       <KenBurnsHero>
-        <div className="absolute inset-0">
-          <img src={heroImg} alt="Trust Book Library" className="w-full h-full object-cover opacity-30" />
-          
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-purple-500/5" />
-        </div>
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <motion.div key={i} className="absolute w-1 h-1 bg-cyan-400/30 rounded-full"
-              style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
-              animate={{ y: [0, -30, 0], opacity: [0.2, 0.8, 0.2] }}
-              transition={{ duration: 3 + Math.random() * 4, repeat: Infinity, delay: Math.random() * 3 }} />
-          ))}
-        </div>
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}
           className="relative z-10 text-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <Badge className="mb-6 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border-cyan-500/30 text-white text-sm backdrop-blur-sm" data-testid="badge-trust-book">
@@ -446,7 +433,7 @@ export default function TrustBook() {
         <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2" animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
           <ChevronRight className="w-6 h-6 text-white/30 rotate-90" />
         </motion.div>
-      </div>
+      </KenBurnsHero>
 
       <div className="sticky top-0 z-40">
         <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-2xl border-b border-white/5" />
@@ -535,9 +522,7 @@ export default function TrustBook() {
         </div>
       </section>
 
-      </KenBurnsHero>
-
-        <section id="section-browse" className="py-16 relative">
+      <section id="section-browse" className="py-16 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/[0.02] to-transparent" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">

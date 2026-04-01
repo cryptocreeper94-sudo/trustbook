@@ -64,7 +64,7 @@ export function KenBurnsHero({ children }: { children: React.ReactNode }) {
           <button
             key={i}
             onClick={() => setIdx(i)}
-            className={w-2 h-2 rounded-full transition-all duration-500 }
+            className={`w-2 h-2 rounded-full transition-all duration-500 ${idx === i ? 'bg-white scale-125' : 'bg-white/30'}`}
           />
         ))}
       </div>
