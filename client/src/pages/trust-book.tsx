@@ -556,6 +556,38 @@ export default function TrustBook() {
                 </GlassCard>
               </motion.div>
             ))}
+            
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="lg:col-span-3 mt-4">
+              <GlassCard glow>
+                <div className="relative overflow-hidden rounded-xl flex flex-col md:flex-row items-center">
+                  <div className="relative w-full md:w-1/3 h-64 md:h-full min-h-[250px] shrink-0">
+                    <img src={readerImg} alt="Speaking Code" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent" />
+                  </div>
+                  <div className="relative z-10 p-6 sm:p-8 flex flex-col flex-1">
+                    <div className="flex gap-2 mb-3">
+                      <Badge className="bg-cyan-500/20 border-cyan-500/30 text-cyan-400 text-xs"><Sparkles className="w-3 h-3 mr-1" /> Technical Series</Badge>
+                      <Badge className="bg-emerald-500/20 border-emerald-500/30 text-emerald-400 text-xs">Technology</Badge>
+                      <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400 text-xs">Non-Fiction</Badge>
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-display font-black text-white mb-3">Speaking Code</h3>
+                    <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-2xl">
+                      The definitive guide to Lume and the AI-native programming revolution. Learn how to bridge the gap between human intent and machine execution without learning an arbitrary syntax. 
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-5">
+                      {["Programming", "AI", "Software Architecture", "Lume"].map(tag => (
+                        <span key={tag} className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/50 text-xs">{tag}</span>
+                      ))}
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button className="gap-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500" data-testid="button-buy-speaking-code" onClick={() => setActiveTab('browse')}>
+                        <Download className="w-4 h-4" /> Download Free eBook
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </GlassCard>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -641,7 +673,7 @@ export default function TrustBook() {
                         <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/10">
                           <div className="flex flex-wrap gap-2">
                             {book.category && <Badge className="bg-white/10 hover:bg-white/20 border-transparent text-white/70 backdrop-blur-md">{book.category === 'fiction' ? 'Fiction' : 'Non-Fiction'}</Badge>}
-                            <Badge className="bg-emerald-500/20 text-emerald-400 border-none">${(book.price / 100).toFixed(2)}</Badge>
+                            <Badge className="bg-emerald-500/20 text-emerald-400 border-none">{book.price === 0 ? "Free" : `$${(book.price / 100).toFixed(2)}`}</Badge>
                             {parseFloat(book.rating) > 0 && (
                               <Badge className="bg-purple-500/20 text-purple-300 border-none gap-1"><Star className="w-3 h-3 fill-purple-300" />{parseFloat(book.rating).toFixed(1)}</Badge>
                             )}
