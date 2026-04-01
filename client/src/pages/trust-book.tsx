@@ -342,7 +342,17 @@ export default function TrustBook() {
       if (category) params.set('category', category);
       if (subcategory) params.set('subcategory', subcategory);
       const res = await fetch(`/api/ebook/catalog/browse?${params}`);
-      if (res.ok) setCatalog(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        if (data.length === 0 && !category) {
+          // Auto-seed if completely empty
+          await fetch('/api/ebook/seed-ecosystem', { method: 'POST' }).catch(() => {});
+          const reseedRes = await fetch('/api/ebook/catalog/browse');
+          if (reseedRes.ok) setCatalog(await reseedRes.json());
+        } else {
+          setCatalog(data);
+        }
+      }
     } catch {} finally { setCatalogLoading(false); }
   };
 
@@ -469,51 +479,55 @@ export default function TrustBook() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="lg:col-span-2 lg:row-span-2">
-              <GlassCard glow>
-                <div className="relative h-full min-h-[400px] overflow-hidden rounded-xl">
-                  <img src={featuredImg} alt="Through The Veil" className="absolute inset-0 w-full h-full object-cover opacity-40" />
-                  
-                  <div className="relative z-10 p-6 sm:p-8 flex flex-col justify-end h-full">
-                    <div className="flex gap-2 mb-3">
-                      <Badge className="bg-cyan-500/20 border-cyan-500/30 text-cyan-400 text-xs"><Sparkles className="w-3 h-3 mr-1" /> Launch Title</Badge>
-                      <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400 text-xs">Non-Fiction</Badge>
-                      <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400 text-xs">Investigation</Badge>
-                    </div>
-                    <h3 className="text-2xl sm:text-3xl font-display font-black text-white mb-3">Through The Veil</h3>
-                    <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-lg">
-                      What if the most important name in history was deliberately changed — and the evidence has been hiding in plain sight for centuries?
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-5">
-                      {["Hidden History", "Ancient Texts", "Institutional Power", "Documentary"].map(tag => (
-                        <span key={tag} className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/50 text-xs">{tag}</span>
-                      ))}
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Link href="/veil/read">
-                        <Button className="gap-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500" data-testid="button-read-now">
-                          <Eye className="w-4 h-4" /> Preview
-                        </Button>
-                      </Link>
-                      <Link href="/veil/read">
-                        <Button className="gap-2 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500" data-testid="button-buy-veil">
-                          <Sparkles className="w-4 h-4" /> Buy for $4.99
-                        </Button>
-                      </Link>
-                    </div>
-                    <p className="text-white/30 text-xs mt-3">$4.99 on Trust Book · $9.99 on Amazon</p>
-                  </div>
-                </div>
-              </GlassCard>
+          <div className="flex flex-col lg:flex-row gap-8 mb-12">
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full lg:w-1/2">
+              <div className="relative rounded-3xl overflow-hidden aspect-[4/5] sm:aspect-video lg:aspect-auto lg:h-[600px] border border-white/10 shadow-[0_0_50px_rgba(6,182,212,0.15)] group">
+                <img src={featuredImg} alt="Through The Veil" className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-slate-950/40 lg:to-slate-950" />
+                <Badge className="absolute top-6 left-6 bg-cyan-500/20 border-cyan-500/30 text-cyan-400 backdrop-blur-md">
+                  <Sparkles className="w-3 h-3 mr-1" /> Launch Title
+                </Badge>
+              </div>
             </motion.div>
+            
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full lg:w-1/2 flex flex-col justify-center py-6 lg:py-12 lg:pr-8">
+              <div className="flex gap-2 mb-4">
+                 <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400">Non-Fiction</Badge>
+                 <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400">Investigation</Badge>
+              </div>
+              <h3 className="text-4xl sm:text-5xl md:text-6xl font-display font-black text-white mb-6">Through The Veil</h3>
+              <p className="text-white/60 text-lg leading-relaxed mb-6 max-w-xl">
+                What if the most important name in history was deliberately changed — and the evidence has been hiding in plain sight for centuries?
+              </p>
+              <div className="flex flex-wrap gap-2 mb-8">
+                {["Hidden History", "Ancient Texts", "Institutional Power", "Documentary"].map(tag => (
+                  <span key={tag} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 text-sm">{tag}</span>
+                ))}
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <Link href="/veil/read">
+                  <Button size="lg" className="h-14 w-full sm:w-auto px-8 gap-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-xl shadow-cyan-900/40 rounded-xl" data-testid="button-read-now">
+                    <Eye className="w-5 h-5" /> Preview First Chapter
+                  </Button>
+                </Link>
+                <Link href="/veil/read">
+                  <Button size="lg" className="h-14 w-full sm:w-auto px-8 gap-2 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 shadow-xl shadow-purple-900/40 rounded-xl" data-testid="button-buy-veil">
+                    <Sparkles className="w-5 h-5" /> Buy Full Access ($4.99)
+                  </Button>
+                </Link>
+              </div>
+              <p className="text-white/30 text-sm">$4.99 on Trust Book · $9.99 on Amazon</p>
+            </motion.div>
+          </div>
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {READER_STATS.map((stat, i) => (
-              <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 + i * 0.1 }}>
+              <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }}>
                 <GlassCard glow={i === 0}>
-                  <div className="p-5 flex flex-col items-center justify-center text-center h-full min-h-[140px]">
+                  <div className="p-6 flex flex-col items-center justify-center text-center h-full min-h-[140px]">
                     <stat.icon className="w-6 h-6 text-cyan-400 mb-3" />
                     <div className="text-3xl font-display font-black text-white mb-1">{stat.value}</div>
-                    <div className="text-xs text-white/40 uppercase tracking-wider">{stat.label}</div>
+                    <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">{stat.label}</div>
                   </div>
                 </GlassCard>
               </motion.div>
@@ -522,88 +536,112 @@ export default function TrustBook() {
         </div>
       </section>
 
-      <section id="section-browse" className="py-16 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/[0.02] to-transparent" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
-            <Badge className="mb-4 px-3 py-1.5 bg-cyan-500/10 border-cyan-500/30 text-cyan-400 text-xs">
-              <Grid3X3 className="w-3 h-3 mr-1" /> Browse Catalog
+      <section id="section-browse" className="py-24 relative overflow-hidden">
+        {/* Cinematic Ambient Orbs */}
+        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] rounded-full bg-cyan-500/5 blur-[120px] mix-blend-screen pointer-events-none -translate-y-1/2" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] rounded-full bg-purple-500/5 blur-[120px] mix-blend-screen pointer-events-none translate-y-1/2" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/80 to-transparent pointer-events-none" />
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <Badge className="mb-4 px-4 py-2 bg-cyan-500/10 border-cyan-500/30 text-cyan-400 text-sm backdrop-blur-sm">
+              <Grid3X3 className="w-4 h-4 mr-2" /> Browse Catalog
             </Badge>
-            <h2 className="text-3xl sm:text-4xl font-display font-black mb-4">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-black mb-6">
               <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Explore by Category</span>
             </h2>
-            <p className="text-white/50 max-w-lg mx-auto text-sm">
-              Browse our growing collection by genre. From fiction to investigation — find your next read.
+            <p className="text-white/50 max-w-xl mx-auto text-lg">
+              Browse our growing collection by genre. From fiction to investigation — find your next read, instantly.
             </p>
           </motion.div>
 
-          <div className="flex flex-wrap gap-3 justify-center mb-8">
+          <div className="flex flex-wrap gap-3 justify-center mb-12">
             <button onClick={() => { setSelectedCategory(null); setSelectedSubcategory(null); fetchCatalog(); }}
-              className={`px-4 py-2 rounded-xl text-sm transition-all min-h-[44px] ${
-                !selectedCategory ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all min-h-[44px] ${
+                !selectedCategory ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 hover:text-white'
               }`} data-testid="filter-all">All Books</button>
             {Object.entries(BOOK_CATEGORIES).map(([key, cat]) => (
               <button key={key} onClick={() => { setSelectedCategory(key); setSelectedSubcategory(null); fetchCatalog(key); }}
-                className={`px-4 py-2 rounded-xl text-sm transition-all min-h-[44px] ${
-                  selectedCategory === key && !selectedSubcategory ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
+                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all min-h-[44px] ${
+                  selectedCategory === key && !selectedSubcategory ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 hover:text-white'
                 }`} data-testid={`filter-${key}`}>{cat.label}</button>
             ))}
           </div>
 
           {selectedCategory && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="flex flex-wrap gap-2 justify-center mb-8">
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="flex flex-wrap gap-2 justify-center mb-10">
               {BOOK_CATEGORIES[selectedCategory as keyof typeof BOOK_CATEGORIES]?.subcategories.map(sub => (
                 <button key={sub} onClick={() => { setSelectedSubcategory(sub); fetchCatalog(selectedCategory, sub); }}
-                  className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
-                    selectedSubcategory === sub ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-white/[0.03] text-white/40 border border-white/5 hover:bg-white/5'
+                  className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+                    selectedSubcategory === sub ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-white/[0.03] text-white/40 border border-white/5 hover:bg-white/10 hover:text-white/60'
                   }`} data-testid={`subfilter-${sub}`}>{sub}</button>
               ))}
             </motion.div>
           )}
 
           {catalogLoading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+            <div className="flex justify-center py-24">
+              <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
             </div>
           ) : catalog.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {catalog.map((book: any) => (
-                <motion.div key={book.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                  <GlassCard>
-                    <div className="p-5">
-                      {book.coverImageUrl && (
-                        <img src={book.coverImageUrl} alt={book.title} className="w-full h-40 object-cover rounded-lg mb-4 opacity-80" />
-                      )}
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-sm font-bold text-white flex-1 mr-2">{book.title}</h3>
-                        <Badge className="text-[10px] bg-emerald-500/10 border-emerald-500/30 text-emerald-400">
-                          ${(book.price / 100).toFixed(2)}
-                        </Badge>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-[420px]">
+              {catalog.map((book: any, i: number) => {
+                const isFeatured = (parseFloat(book.rating) > 4.5 && i % 4 === 0) || catalog.length === 1;
+                const isWide = !isFeatured && (i % 5 === 2);
+                
+                const getCover = () => {
+                  if (book.coverImageUrl) return book.coverImageUrl;
+                  if (book.category === 'fiction') return '/images/cover-placeholder-fiction.png';
+                  if (book.subcategory?.toLowerCase().includes('investig')) return '/images/cover-placeholder-investigation.png';
+                  if (book.subcategory?.toLowerCase().includes('tech')) return '/images/cover-placeholder-technology.png';
+                  return '/images/cover-placeholder-nonfiction.png';
+                };
+
+                return (
+                  <motion.div key={book.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                     className={`${isFeatured ? 'md:col-span-2 xl:col-span-2 row-span-2' : isWide ? 'md:col-span-2 xl:col-span-2 row-span-1' : 'col-span-1 row-span-1'}`}>
+                    <div className="relative h-full w-full rounded-2xl overflow-hidden group border border-white/10 hover:border-cyan-500/50 transition-colors duration-500 bg-slate-900/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]">
+                      <div className="absolute inset-0 z-0">
+                        <img src={getCover()} alt={book.title} className="w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-105 transition-all duration-1000" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent" />
                       </div>
-                      <p className="text-xs text-white/40 mb-2">by {book.authorName}</p>
-                      <p className="text-xs text-white/30 line-clamp-2 mb-3">{book.description}</p>
-                      <div className="flex items-center gap-2 mb-3">
-                        {book.category && <Badge className="text-[10px] bg-white/5 border-white/10 text-white/50">{book.category === 'fiction' ? 'Fiction' : 'Non-Fiction'}</Badge>}
-                        {book.subcategory && <Badge className="text-[10px] bg-white/5 border-white/10 text-white/40">{book.subcategory}</Badge>}
-                      </div>
-                      <div className="flex items-center gap-2 text-[10px] text-white/30">
-                        {book.wordCount && <span>{(book.wordCount / 1000).toFixed(0)}K words</span>}
-                        {book.chapterCount && <><span>·</span><span>{book.chapterCount} chapters</span></>}
-                        {parseFloat(book.rating) > 0 && (
-                          <><span>·</span><span className="flex items-center gap-0.5"><Star className="w-3 h-3 text-purple-400 fill-purple-400" />{parseFloat(book.rating).toFixed(1)}</span></>
-                        )}
+                      <div className="relative z-10 p-6 flex flex-col justify-end h-full">
+                        <div className="flex items-start justify-between mb-3">
+                          <h3 className={`font-display font-black text-white leading-tight ${isFeatured ? 'text-3xl sm:text-4xl' : 'text-2xl'} group-hover:text-cyan-300 transition-colors`}>
+                            {book.title}
+                          </h3>
+                        </div>
+                        <p className={`text-white/40 mb-3 ${isFeatured ? 'text-base' : 'text-sm'}`}>by {book.authorName}</p>
+                        <p className={`text-white/60 mb-6 ${isFeatured ? 'line-clamp-3 text-base' : 'line-clamp-2 text-sm'}`}>{book.description}</p>
+                        
+                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/10">
+                          <div className="flex flex-wrap gap-2">
+                            {book.category && <Badge className="bg-white/10 hover:bg-white/20 border-transparent text-white/70 backdrop-blur-md">{book.category === 'fiction' ? 'Fiction' : 'Non-Fiction'}</Badge>}
+                            <Badge className="bg-emerald-500/20 text-emerald-400 border-none">${(book.price / 100).toFixed(2)}</Badge>
+                            {parseFloat(book.rating) > 0 && (
+                              <Badge className="bg-purple-500/20 text-purple-300 border-none gap-1"><Star className="w-3 h-3 fill-purple-300" />{parseFloat(book.rating).toFixed(1)}</Badge>
+                            )}
+                          </div>
+                          
+                          <Link href={`/veil/read?book=${book.slug || book.id}`}>
+                            <Button size="sm" variant="ghost" className="rounded-full hover:bg-cyan-500/20 hover:text-cyan-400 text-white gap-2">
+                              Read <ArrowRight className="w-4 h-4" />
+                            </Button>
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                  </GlassCard>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-              <p className="text-white/40 text-sm">No books in this category yet. Be the first to publish!</p>
-              <Button onClick={() => scrollToSection('publish')} variant="outline" className="mt-4 border-white/20 text-white hover:bg-white/5" data-testid="button-publish-first">
-                <Upload className="w-4 h-4 mr-2" /> Publish Your Book
+            <div className="text-center py-24 glassmorphism rounded-3xl border border-white/5 max-w-2xl mx-auto">
+              <BookOpen className="w-16 h-16 text-slate-700 mx-auto mb-6" />
+              <h3 className="text-2xl font-display font-bold text-white mb-2">No Books Found</h3>
+              <p className="text-white/40 text-base mb-8">This category is currently empty. Be the first to publish your work.</p>
+              <Button onClick={() => scrollToSection('publish')} size="lg" className="bg-white/10 hover:bg-white/20 text-white rounded-xl gap-2 min-h-[56px] px-8" data-testid="button-publish-first">
+                <Upload className="w-5 h-5" /> Publish Your Book
               </Button>
             </div>
           )}
