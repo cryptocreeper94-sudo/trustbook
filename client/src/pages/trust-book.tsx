@@ -298,8 +298,15 @@ export default function TrustBook() {
   const [submitForm, setSubmitForm] = useState({
     title: '', description: '', genre: '', category: 'nonfiction', subcategory: '', price: '499', tags: '',
   });
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
     const manifestLink = document.querySelector('link[rel="manifest"]');
     if (manifestLink) manifestLink.setAttribute("href", "/manifest-trustbook.webmanifest");
     const themeColor = document.querySelector('meta[name="theme-color"]');
@@ -319,7 +326,18 @@ export default function TrustBook() {
     };
     checkAuth();
     fetchCatalog();
+    
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
   }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
 
   const fetchUserData = async (uid: string) => {
     try {
@@ -438,6 +456,12 @@ export default function TrustBook() {
               className="h-14 px-8 text-base gap-2 border-white/20 text-white hover:bg-white/5 rounded-xl" data-testid="button-write-book">
               <PenTool className="w-5 h-5" /> Write Your Book
             </Button>
+            {deferredPrompt && (
+              <Button size="lg" variant="default" onClick={handleInstallClick}
+                className="h-14 px-8 text-base gap-2 bg-emerald-500 hover:bg-emerald-400 text-black shadow-lg shadow-emerald-500/20 rounded-xl font-bold" data-testid="button-install-pwa">
+                <Download className="w-5 h-5" /> Install App
+              </Button>
+            )}
           </div>
         </motion.div>
         <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2" animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
