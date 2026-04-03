@@ -640,7 +640,7 @@ export default function TrustBook() {
               <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
             </div>
           ) : catalog.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-[420px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 auto-rows-[minmax(320px,auto)] md:auto-rows-[420px]">
               {catalog.map((book: any, i: number) => {
                 const isFeatured = (parseFloat(book.rating) > 4.5 && i % 4 === 0) || catalog.length === 1;
                 const isWide = !isFeatured && (i % 5 === 2);
@@ -655,32 +655,32 @@ export default function TrustBook() {
 
                 return (
                   <motion.div key={book.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                     className={`${isFeatured ? 'md:col-span-2 xl:col-span-2 row-span-2' : isWide ? 'md:col-span-2 xl:col-span-2 row-span-1' : 'col-span-1 row-span-1'}`}>
+                     className={`min-w-0 overflow-hidden ${isFeatured ? 'md:col-span-2 xl:col-span-2 md:row-span-2' : isWide ? 'md:col-span-2 xl:col-span-2' : ''}`}>
                     <div className="relative h-full w-full rounded-2xl overflow-hidden group border border-white/10 hover:border-cyan-500/50 transition-colors duration-500 bg-slate-900/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]">
                       <div className="absolute inset-0 z-0">
                         <img src={getCover()} alt={book.title} className="w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-105 transition-all duration-1000" />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent" />
                       </div>
-                      <div className="relative z-10 p-6 flex flex-col justify-end h-full">
-                        <div className="flex items-start justify-between mb-3">
-                          <h3 className={`font-display font-black text-white leading-tight ${isFeatured ? 'text-3xl sm:text-4xl' : 'text-2xl'} group-hover:text-cyan-300 transition-colors`}>
+                      <div className="relative z-10 p-4 sm:p-6 flex flex-col justify-end h-full min-w-0">
+                        <div className="mb-3 min-w-0">
+                          <h3 className={`font-display font-black text-white leading-tight min-w-0 break-words ${isFeatured ? 'text-2xl sm:text-3xl md:text-4xl' : 'text-xl sm:text-2xl'} group-hover:text-cyan-300 transition-colors`}>
                             {book.title}
                           </h3>
                         </div>
-                        <p className={`text-white/40 mb-3 ${isFeatured ? 'text-base' : 'text-sm'}`}>by {book.authorName}</p>
-                        <p className={`text-white/60 mb-6 ${isFeatured ? 'line-clamp-3 text-base' : 'line-clamp-2 text-sm'}`}>{book.description}</p>
+                        <p className={`text-white/40 mb-3 truncate ${isFeatured ? 'text-sm sm:text-base' : 'text-sm'}`}>by {book.authorName}</p>
+                        <p className={`text-white/60 mb-4 sm:mb-6 ${isFeatured ? 'line-clamp-3 text-sm sm:text-base' : 'line-clamp-2 text-sm'}`}>{book.description}</p>
                         
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/10">
-                          <div className="flex flex-wrap gap-2">
-                            {book.category && <Badge className="bg-white/10 hover:bg-white/20 border-transparent text-white/70 backdrop-blur-md">{book.category === 'fiction' ? 'Fiction' : 'Non-Fiction'}</Badge>}
-                            <Badge className="bg-emerald-500/20 text-emerald-400 border-none">{book.price === 0 ? "Free" : `$${(book.price / 100).toFixed(2)}`}</Badge>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-auto pt-3 sm:pt-4 border-t border-white/10 gap-3 sm:gap-2">
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2 min-w-0">
+                            {book.category && <Badge className="bg-white/10 hover:bg-white/20 border-transparent text-white/70 backdrop-blur-md text-xs">{book.category === 'fiction' ? 'Fiction' : 'Non-Fiction'}</Badge>}
+                            <Badge className="bg-emerald-500/20 text-emerald-400 border-none text-xs">{book.price === 0 ? "Free" : `$${(book.price / 100).toFixed(2)}`}</Badge>
                             {parseFloat(book.rating) > 0 && (
-                              <Badge className="bg-purple-500/20 text-purple-300 border-none gap-1"><Star className="w-3 h-3 fill-purple-300" />{parseFloat(book.rating).toFixed(1)}</Badge>
+                              <Badge className="bg-purple-500/20 text-purple-300 border-none gap-1 text-xs"><Star className="w-3 h-3 fill-purple-300" />{parseFloat(book.rating).toFixed(1)}</Badge>
                             )}
                           </div>
                           
                           <Link href={`/veil/read?book=${book.slug || book.id}`}>
-                            <Button size="sm" variant="ghost" className="rounded-full hover:bg-cyan-500/20 hover:text-cyan-400 text-white gap-2">
+                            <Button size="sm" variant="ghost" className="rounded-full hover:bg-cyan-500/20 hover:text-cyan-400 text-white gap-2 shrink-0 w-full sm:w-auto justify-center">
                               Read <ArrowRight className="w-4 h-4" />
                             </Button>
                           </Link>
