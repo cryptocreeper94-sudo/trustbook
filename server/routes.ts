@@ -23651,52 +23651,60 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
 
   app.get("/api/ebook/catalog", async (_req, res) => {
     try {
-      let books = await storage.getPublishedBooks("published");
+      const defaultBooks = [
+        {
+          id: 1,
+          authorId: "mathew-trustlayer",
+          authorName: "Jason Andrews",
+          title: "Through The Veil",
+          slug: "through-the-veil",
+          description: "A 107,000-word investigation into the hidden architecture of history. 52 chapters. 13 parts. What if the most important name in history was deliberately changed — and the evidence has been hiding in plain sight for centuries?",
+          genre: "Investigation",
+          category: "nonfiction",
+          subcategory: "Investigation",
+          tags: ["Hidden History", "Ancient Texts", "Institutional Power", "Documentary"],
+          price: 499,
+          status: "published",
+          coverImageUrl: "/images/trust-book-featured.jpg",
+          wordCount: 107000,
+          chapterCount: 52,
+          sampleChapters: 1,
+          rating: "5.0",
+          reviewCount: 142,
+          publishedAt: new Date().toISOString()
+        },
+        {
+          id: 2,
+          authorId: "ecosystem",
+          authorName: "Jason Andrews",
+          title: "Speaking Code: The Lume Story",
+          slug: "speaking-code",
+          description: "How an AI-Native Language Made Programming Human Again. The definitive guide to Lume — the first programming language where you can say what you want in plain English and the compiler understands. The architecture behind cognitive distance and voice-to-code execution.",
+          genre: "Technology",
+          category: "nonfiction",
+          subcategory: "Technology",
+          tags: ["Programming", "AI", "Lume", "Software Architecture", "Future of Work"],
+          price: 0,
+          status: "published",
+          coverImageUrl: "/images/trust-book-reader.jpg",
+          wordCount: 45000,
+          chapterCount: 12,
+          sampleChapters: 2,
+          rating: "4.9",
+          reviewCount: 38,
+          publishedAt: new Date().toISOString()
+        }
+      ];
+
+      let books: any[] = [];
+      try {
+        books = await storage.getPublishedBooks("published");
+      } catch (dbErr: any) {
+        console.warn("[Catalog] DB query failed, using defaults:", dbErr.message);
+      }
+
       if (!books || books.length === 0) {
-        books = [
-          {
-            id: 1,
-            authorId: "mathew-trustlayer",
-            authorName: "Mathew",
-            title: "Through The Veil",
-            slug: "through-the-veil",
-            description: "A 107,000-word investigation into the hidden architecture of history. 52 chapters. 13 parts. What if the most important name in history was deliberately changed — and the evidence has been hiding in plain sight for centuries?",
-            genre: "Investigation",
-            category: "nonfiction",
-            subcategory: "Investigation",
-            tags: ["Hidden History", "Ancient Texts", "Institutional Power", "Documentary"],
-            price: 499,
-            status: "published",
-            coverImageUrl: "/images/trust-book-featured.jpg",
-            wordCount: 107000,
-            chapterCount: 52,
-            sampleChapters: 1,
-            rating: "5.0",
-            reviewCount: 142,
-            publishedAt: new Date().toISOString()
-          },
-          {
-            id: 2,
-            authorId: "mathew-trustlayer",
-            authorName: "Mathew",
-            title: "Speaking Code",
-            slug: "speaking-code",
-            description: "The definitive guide to Lume and the AI-native programming revolution. Learn how to bridge the gap between human intent and machine execution without learning an arbitrary syntax. The architecture behind cognitive distance and voice-to-code execution.",
-            genre: "Technology",
-            category: "nonfiction",
-            subcategory: "Technology",
-            tags: ["Programming", "AI", "Lume", "Software Architecture", "Future of Work"],
-            price: 0,
-            status: "published",
-            coverImageUrl: "/images/trust-book-reader.jpg",
-            wordCount: 45000,
-            chapterCount: 12,
-            sampleChapters: 2,
-            rating: "4.9",
-            reviewCount: 38,
-            publishedAt: new Date().toISOString()
-          }
-        ];
+        books = defaultBooks;
       }
       res.json({ books });
     } catch (error: any) {
@@ -23935,59 +23943,68 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
   app.get("/api/ebook/catalog/browse", async (req, res) => {
     try {
       const { category, subcategory } = req.query;
-      let books;
-      if (category && typeof category === "string") {
-        books = await storage.getPublishedBooksByCategory(category, subcategory as string | undefined);
-      } else {
-        books = await storage.getPublishedBooks("published");
+
+      // Hardcoded default books — always returned if DB is empty or unavailable
+      const defaultBooks = [
+        {
+          id: 1,
+          authorId: "mathew-trustlayer",
+          authorName: "Jason Andrews",
+          title: "Through The Veil",
+          slug: "through-the-veil",
+          description: "A 107,000-word investigation into the hidden architecture of history. 52 chapters. 13 parts. What if the most important name in history was deliberately changed — and the evidence has been hiding in plain sight for centuries?",
+          genre: "Investigation",
+          category: "nonfiction",
+          subcategory: "Investigation",
+          tags: ["Hidden History", "Ancient Texts", "Institutional Power", "Documentary"],
+          price: 499,
+          status: "published",
+          coverImageUrl: "/images/trust-book-featured.jpg",
+          wordCount: 107000,
+          chapterCount: 52,
+          sampleChapters: 1,
+          rating: "5.0",
+          reviewCount: 142,
+          publishedAt: new Date().toISOString()
+        },
+        {
+          id: 2,
+          authorId: "ecosystem",
+          authorName: "Jason Andrews",
+          title: "Speaking Code: The Lume Story",
+          slug: "speaking-code",
+          description: "How an AI-Native Language Made Programming Human Again. The definitive guide to Lume — the first programming language where you can say what you want in plain English and the compiler understands. The architecture behind cognitive distance and voice-to-code execution.",
+          genre: "Technology",
+          category: "nonfiction",
+          subcategory: "Technology",
+          tags: ["Programming", "AI", "Lume", "Software Architecture", "Future of Work"],
+          price: 0,
+          status: "published",
+          coverImageUrl: "/images/trust-book-reader.jpg",
+          wordCount: 45000,
+          chapterCount: 12,
+          sampleChapters: 2,
+          rating: "4.9",
+          reviewCount: 38,
+          publishedAt: new Date().toISOString()
+        }
+      ];
+
+      // Try fetching from DB, fall through to defaults on any failure
+      let books: any[] = [];
+      try {
+        if (category && typeof category === "string") {
+          books = await storage.getPublishedBooksByCategory(category, subcategory as string | undefined);
+        } else {
+          books = await storage.getPublishedBooks("published");
+        }
+      } catch (dbErr: any) {
+        console.warn("[Catalog] DB query failed, using defaults:", dbErr.message);
+        books = [];
       }
 
+      // If DB returned nothing, use defaults (filtered by category if needed)
       if (!books || books.length === 0) {
-        const defaultBooks = [
-          {
-            id: 1,
-            authorId: "mathew-trustlayer",
-            authorName: "Mathew",
-            title: "Through The Veil",
-            slug: "through-the-veil",
-            description: "A 107,000-word investigation into the hidden architecture of history. 52 chapters. 13 parts. What if the most important name in history was deliberately changed — and the evidence has been hiding in plain sight for centuries?",
-            genre: "Investigation",
-            category: "nonfiction",
-            subcategory: "Investigation",
-            tags: ["Hidden History", "Ancient Texts", "Institutional Power", "Documentary"],
-            price: 499,
-            status: "published",
-            coverImageUrl: "/images/trust-book-featured.jpg",
-            wordCount: 107000,
-            chapterCount: 52,
-            sampleChapters: 1,
-            rating: "5.0",
-            reviewCount: 142,
-            publishedAt: new Date().toISOString()
-          },
-          {
-            id: 2,
-            authorId: "mathew-trustlayer",
-            authorName: "Mathew",
-            title: "Speaking Code",
-            slug: "speaking-code",
-            description: "The definitive guide to Lume and the AI-native programming revolution. Learn how to bridge the gap between human intent and machine execution without learning an arbitrary syntax. The architecture behind cognitive distance and voice-to-code execution.",
-            genre: "Technology",
-            category: "nonfiction",
-            subcategory: "Technology",
-            tags: ["Programming", "AI", "Lume", "Software Architecture", "Future of Work"],
-            price: 0,
-            status: "published",
-            coverImageUrl: "/images/trust-book-reader.jpg",
-            wordCount: 45000,
-            chapterCount: 12,
-            sampleChapters: 2,
-            rating: "4.9",
-            reviewCount: 38,
-            publishedAt: new Date().toISOString()
-          }
-        ];
-
         books = defaultBooks.filter(b => {
           if (category && b.category !== category) return false;
           if (subcategory && b.subcategory !== subcategory) return false;
