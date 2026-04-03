@@ -25,12 +25,12 @@ const readerImg = "/images/trust-book-reader.jpg";
 const audioImg = "/images/trust-book-audio.jpg";
 
 const PLATFORM_FEATURES = [
-  { icon: BookOpen, title: "Immersive E-Reader", desc: "Full-screen reading with adjustable fonts, themes, and progress tracking across all devices.", gradient: "from-cyan-500 to-blue-600" },
-  { icon: Headphones, title: "AI Narration", desc: "Every book narrated by premium AI voices. Listen while you commute, exercise, or unwind.", gradient: "from-purple-500 to-pink-600" },
-  { icon: Download, title: "Multi-Format", desc: "Read online, download PDF, or export EPUB. Your library, your format, your choice.", gradient: "from-purple-500 to-cyan-600" },
-  { icon: Smartphone, title: "Mobile-First PWA", desc: "Install on any device. Works offline. True app experience without the app store.", gradient: "from-emerald-500 to-teal-600" },
-  { icon: Shield, title: "Blockchain Verified", desc: "Every publication timestamped on the Trust Layer blockchain. Provenance you can verify.", gradient: "from-red-500 to-rose-600" },
-  { icon: Users, title: "Author Publishing", desc: "Publish your own work. Transparent royalties tracked on-chain. No gatekeepers.", gradient: "from-indigo-500 to-violet-600" },
+  { icon: BookOpen, title: "Immersive E-Reader", desc: "Full-screen reading with adjustable fonts, themes, and progress tracking across all devices.", gradient: "from-cyan-500 to-blue-600", image: "/images/feature-ereader.png" },
+  { icon: Headphones, title: "AI Narration", desc: "Every book narrated by premium AI voices. Listen while you commute, exercise, or unwind.", gradient: "from-purple-500 to-pink-600", image: "/images/feature-narration.png" },
+  { icon: Download, title: "Multi-Format", desc: "Read online, download PDF, or export EPUB. Your library, your format, your choice.", gradient: "from-purple-500 to-cyan-600", image: "/images/feature-multiformat.png" },
+  { icon: Smartphone, title: "Mobile-First PWA", desc: "Install on any device. Works offline. True app experience without the app store.", gradient: "from-emerald-500 to-teal-600", image: "/images/feature-mobile.png" },
+  { icon: Shield, title: "Blockchain Verified", desc: "Every publication timestamped on the Trust Layer blockchain. Provenance you can verify.", gradient: "from-red-500 to-rose-600", image: "/images/feature-blockchain.png" },
+  { icon: Users, title: "Author Publishing", desc: "Publish your own work. Transparent royalties tracked on-chain. No gatekeepers.", gradient: "from-indigo-500 to-violet-600", image: "/images/feature-publishing.png" },
 ];
 
 const READER_STATS = [
@@ -1156,15 +1156,20 @@ export default function TrustBook() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {PLATFORM_FEATURES.map((feature, i) => (
               <motion.div key={feature.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <GlassCard glow={i < 2}>
-                  <div className="p-5 sm:p-6 h-full flex flex-col">
-                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 shadow-lg`}>
+                <div className="relative rounded-2xl overflow-hidden border border-white/10 hover:border-cyan-500/30 transition-all duration-500 group h-[280px] sm:h-[320px]">
+                  {/* Photorealistic Background */}
+                  <img src={feature.image} alt={feature.title} className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-700" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/20" />
+                  
+                  {/* Content */}
+                  <div className="relative z-10 p-5 sm:p-6 h-full flex flex-col justify-end">
+                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 shadow-lg shadow-black/30 backdrop-blur-sm`}>
                       <feature.icon className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="text-base font-bold text-white mb-2">{feature.title}</h3>
-                    <p className="text-sm text-white/50 leading-relaxed flex-1">{feature.desc}</p>
+                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">{feature.title}</h3>
+                    <p className="text-sm text-white/60 leading-relaxed">{feature.desc}</p>
                   </div>
-                </GlassCard>
+                </div>
               </motion.div>
             ))}
           </div>
