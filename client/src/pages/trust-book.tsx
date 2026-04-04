@@ -605,9 +605,11 @@ export default function TrustBook() {
                       <p className="text-white/50 text-xs leading-relaxed mb-3 line-clamp-2">
                         The guide to Lume and the AI-native programming revolution.
                       </p>
-                      <Button size="sm" className="gap-1.5 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-xs w-fit" data-testid="button-buy-speaking-code" onClick={() => setActiveTab('browse')}>
-                        <Download className="w-3.5 h-3.5" /> Free eBook
-                      </Button>
+                      <Link href="/speaking-code/read">
+                        <Button size="sm" className="gap-1.5 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-xs w-fit" data-testid="button-buy-speaking-code">
+                          <Download className="w-3.5 h-3.5" /> Free eBook
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </GlassCard>
