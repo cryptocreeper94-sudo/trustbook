@@ -23245,6 +23245,9 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
   let cachedVeilChapters: any = null;
   let cachedVeilMtime: number = 0;
 
+  let cachedSpeakingCodeChapters: any = null;
+  let cachedSpeakingCodeMtime: number = 0;
+
   function parseVeilMarkdown(markdown: string) {
     const lines = markdown.split('\n');
     const chapters: { id: string; title: string; content: string; partTitle: string }[] = [];
@@ -23679,7 +23682,7 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
           authorName: "Jason Andrews",
           title: "Speaking Code: The Lume Story",
           slug: "speaking-code",
-          description: "How an AI-Native Language Made Programming Human Again. The definitive guide to Lume — the first programming language where you can say what you want in plain English and the compiler understands. The architecture behind cognitive distance and voice-to-code execution.",
+          description: "How a Deterministic Natural-Language Compiler Made Programming Human Again. The definitive guide to Lume — the first programming language where you can say what you want in plain English and the compiler understands. The documentary-style story of cognitive distance, voice-to-code, and the future of software.",
           genre: "Technology",
           category: "nonfiction",
           subcategory: "Technology",
@@ -23687,8 +23690,8 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
           price: 0,
           status: "published",
           coverImageUrl: "/images/trust-book-reader.jpg",
-          wordCount: 45000,
-          chapterCount: 12,
+          wordCount: 38000,
+          chapterCount: 10,
           sampleChapters: 2,
           rating: "4.9",
           reviewCount: 38,
@@ -23912,6 +23915,46 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
         }
       }
 
+      // For "speaking-code", use the speaking-code.md markdown file
+      if (slug === "speaking-code") {
+        const scPaths = [
+          path.join(process.cwd(), "client", "public", "speaking-code.md"),
+          path.join(process.cwd(), "public", "speaking-code.md"),
+          path.join(process.cwd(), "dist", "public", "speaking-code.md"),
+        ];
+
+        let scContent = '';
+        let scMtime = 0;
+        for (const scPath of scPaths) {
+          if (fs.existsSync(scPath)) {
+            const stat = fs.statSync(scPath);
+            scMtime = stat.mtimeMs;
+            if (!cachedSpeakingCodeChapters || scMtime !== cachedSpeakingCodeMtime) {
+              scContent = fs.readFileSync(scPath, 'utf-8');
+            }
+            break;
+          }
+        }
+
+        if (scContent) {
+          cachedSpeakingCodeChapters = parseVeilMarkdown(scContent);
+          cachedSpeakingCodeMtime = scMtime;
+        }
+
+        if (cachedSpeakingCodeChapters) {
+          // Speaking Code is free — return all chapters
+          const volumes = cachedSpeakingCodeChapters as any[];
+          const toc = volumes.map((v: any) => ({
+            id: v.id,
+            title: v.title,
+            subtitle: v.subtitle,
+            chapters: v.chapters.map((c: any) => ({ id: c.id, title: c.title, partTitle: c.partTitle })),
+          }));
+          res.setHeader('Cache-Control', 'public, max-age=300');
+          return res.json(toc);
+        }
+      }
+
       // Try DB lookup
       let book: any = null;
       try {
@@ -23993,6 +24036,48 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
 
         if (cachedVeilChapters) {
           const volumes = cachedVeilChapters as any[];
+          if (volIndex < volumes.length && chapIndex < volumes[volIndex].chapters.length) {
+            const chapter = volumes[volIndex].chapters[chapIndex];
+            res.setHeader('Cache-Control', 'public, max-age=300');
+            return res.json({
+              id: chapter.id,
+              title: chapter.title,
+              content: chapter.content,
+              partTitle: chapter.partTitle,
+            });
+          }
+        }
+        return res.status(404).json({ error: "Chapter not found" });
+      }
+
+      // For "speaking-code", use the speaking-code.md markdown file
+      if (slug === "speaking-code") {
+        const scPaths = [
+          path.join(process.cwd(), "client", "public", "speaking-code.md"),
+          path.join(process.cwd(), "public", "speaking-code.md"),
+          path.join(process.cwd(), "dist", "public", "speaking-code.md"),
+        ];
+
+        let scContent = '';
+        let scMtime = 0;
+        for (const scPath of scPaths) {
+          if (fs.existsSync(scPath)) {
+            const stat = fs.statSync(scPath);
+            scMtime = stat.mtimeMs;
+            if (!cachedSpeakingCodeChapters || scMtime !== cachedSpeakingCodeMtime) {
+              scContent = fs.readFileSync(scPath, 'utf-8');
+            }
+            break;
+          }
+        }
+
+        if (scContent) {
+          cachedSpeakingCodeChapters = parseVeilMarkdown(scContent);
+          cachedSpeakingCodeMtime = scMtime;
+        }
+
+        if (cachedSpeakingCodeChapters) {
+          const volumes = cachedSpeakingCodeChapters as any[];
           if (volIndex < volumes.length && chapIndex < volumes[volIndex].chapters.length) {
             const chapter = volumes[volIndex].chapters[chapIndex];
             res.setHeader('Cache-Control', 'public, max-age=300');
