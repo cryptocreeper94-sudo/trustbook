@@ -23863,17 +23863,93 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
 
   app.get("/api/ebook/catalog/:slug/toc", async (req, res) => {
     try {
-      const book = await storage.getPublishedBook(req.params.slug);
-      if (!book) return res.status(404).json({ error: "Book not found" });
+      const slug = req.params.slug;
+
+      // For "through-the-veil", use the real markdown-based TOC
+      if (slug === "through-the-veil" || slug === "veil") {
+        const mdPaths = [
+          path.join(process.cwd(), "client", "public", "through-the-veil.md"),
+          path.join(process.cwd(), "public", "through-the-veil.md"),
+          path.join(process.cwd(), "dist", "public", "through-the-veil.md"),
+        ];
+
+        let mdContent = '';
+        let mdMtime = 0;
+        for (const mdPath of mdPaths) {
+          if (fs.existsSync(mdPath)) {
+            const stat = fs.statSync(mdPath);
+            mdMtime = stat.mtimeMs;
+            if (!cachedVeilChapters || mdMtime !== cachedVeilMtime) {
+              mdContent = fs.readFileSync(mdPath, 'utf-8');
+            }
+            break;
+          }
+        }
+
+        if (mdContent) {
+          cachedVeilChapters = parseVeilMarkdown(mdContent);
+          cachedVeilMtime = mdMtime;
+        }
+
+        if (cachedVeilChapters) {
+          // Show first volume (4 chapters) as free demo
+          const preview = req.query.preview !== "false";
+          let volumes = cachedVeilChapters as any[];
+          if (preview) {
+            volumes = volumes.slice(0, 1).map((v: any) => ({
+              ...v,
+              chapters: v.chapters?.slice(0, 4) || [],
+            }));
+          }
+          const toc = volumes.map((v: any) => ({
+            id: v.id,
+            title: v.title,
+            subtitle: v.subtitle,
+            chapters: v.chapters.map((c: any) => ({ id: c.id, title: c.title, partTitle: c.partTitle })),
+          }));
+          res.setHeader('Cache-Control', 'public, max-age=300');
+          return res.json(toc);
+        }
+      }
+
+      // Try DB lookup
+      let book: any = null;
+      try {
+        book = await storage.getPublishedBook(slug);
+      } catch (e) { /* DB may not have table */ }
+
+      if (!book) {
+        try {
+          book = await storage.getPublishedBookBySlug(slug);
+        } catch (e) { /* fallthrough */ }
+      }
+
+      // Fallback for known ecosystem books
+      if (!book) {
+        const knownBooks: Record<string, any> = {
+          "speaking-code": {
+            title: "Speaking Code: The Lume Story",
+            description: "How an AI-Native Language Made Programming Human Again. The definitive guide to Lume — the first programming language where you can say what you want in plain English and the compiler understands.",
+            chapterCount: 12,
+          },
+        };
+        book = knownBooks[slug];
+      }
+
+      if (!book) return res.status(404).json({ error: "Book not found in catalog" });
+
+      const chapterCount = book.chapterCount || 1;
+      const chapters = [];
+      for (let i = 0; i < Math.min(chapterCount, 12); i++) {
+        chapters.push({ id: `chap-${i + 1}`, title: `Chapter ${i + 1}`, partTitle: i === 0 ? book.title : undefined });
+      }
 
       const toc = [
         {
           id: "vol-1",
           title: "Volume I",
-          subtitle: "Introduction",
-          chapters: [
-            { id: "chap-1", title: "Chapter 1", partTitle: book.title }
-          ]
+          subtitle: book.title,
+          chapters,
         }
       ];
       res.json(toc);
@@ -23885,14 +23961,81 @@ Keep responses concise (2-3 sentences max), friendly, and helpful. If asked abou
 
   app.get("/api/ebook/catalog/:slug/chapter/:volIdx/:chapIdx", async (req, res) => {
     try {
-      const book = await storage.getPublishedBook(req.params.slug);
+      const slug = req.params.slug;
+      const volIndex = parseInt(req.params.volIdx, 10);
+      const chapIndex = parseInt(req.params.chapIdx, 10);
+
+      // For "through-the-veil", use the real markdown content
+      if (slug === "through-the-veil" || slug === "veil") {
+        const mdPaths = [
+          path.join(process.cwd(), "client", "public", "through-the-veil.md"),
+          path.join(process.cwd(), "public", "through-the-veil.md"),
+          path.join(process.cwd(), "dist", "public", "through-the-veil.md"),
+        ];
+
+        let mdContent = '';
+        let mdMtime = 0;
+        for (const mdPath of mdPaths) {
+          if (fs.existsSync(mdPath)) {
+            const stat = fs.statSync(mdPath);
+            mdMtime = stat.mtimeMs;
+            if (!cachedVeilChapters || mdMtime !== cachedVeilMtime) {
+              mdContent = fs.readFileSync(mdPath, 'utf-8');
+            }
+            break;
+          }
+        }
+
+        if (mdContent) {
+          cachedVeilChapters = parseVeilMarkdown(mdContent);
+          cachedVeilMtime = mdMtime;
+        }
+
+        if (cachedVeilChapters) {
+          const volumes = cachedVeilChapters as any[];
+          if (volIndex < volumes.length && chapIndex < volumes[volIndex].chapters.length) {
+            const chapter = volumes[volIndex].chapters[chapIndex];
+            res.setHeader('Cache-Control', 'public, max-age=300');
+            return res.json({
+              id: chapter.id,
+              title: chapter.title,
+              content: chapter.content,
+              partTitle: chapter.partTitle,
+            });
+          }
+        }
+        return res.status(404).json({ error: "Chapter not found" });
+      }
+
+      // Try DB lookup
+      let book: any = null;
+      try {
+        book = await storage.getPublishedBook(slug);
+      } catch (e) { }
+      if (!book) {
+        try {
+          book = await storage.getPublishedBookBySlug(slug);
+        } catch (e) { }
+      }
+
+      if (!book) {
+        // Fallback for known ecosystem books
+        const knownBooks: Record<string, any> = {
+          "speaking-code": {
+            title: "Speaking Code: The Lume Story",
+            description: "How an AI-Native Language Made Programming Human Again. The definitive guide to Lume — the first programming language where you can say what you want in plain English and the compiler understands. The architecture behind cognitive distance and voice-to-code execution.",
+          },
+        };
+        book = knownBooks[slug];
+      }
+
       if (!book) return res.status(404).json({ error: "Book not found" });
 
-      // For MVP: Dynamically serving the metadata to prove e-reader works
       const chapter = {
-        id: "chap-1",
-        title: "Chapter 1",
-        content: `# ${book.title}\n\n${book.description}\n\n> This requires full manuscript integration for the remainder of the chapters.`
+        id: `chap-${chapIndex + 1}`,
+        title: `Chapter ${chapIndex + 1}`,
+        content: `# ${book.title}\n\n${book.description}\n\n> Full manuscript content coming soon.`,
+        partTitle: chapIndex === 0 ? book.title : undefined,
       };
       res.json(chapter);
     } catch (error: any) {

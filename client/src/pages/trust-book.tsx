@@ -557,15 +557,15 @@ export default function TrustBook() {
               </motion.div>
             ))}
             
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="lg:col-span-3 mt-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="col-span-2 lg:col-span-4 mt-4">
               <GlassCard glow>
-                <div className="relative overflow-hidden rounded-xl flex flex-col md:flex-row items-center">
-                  <div className="relative w-full md:w-1/3 h-64 md:h-full min-h-[250px] shrink-0">
+                <div className="relative overflow-hidden rounded-xl flex flex-col md:flex-row">
+                  <div className="relative w-full md:w-1/3 h-48 sm:h-64 md:h-auto md:min-h-[300px] shrink-0 overflow-hidden">
                     <img src={readerImg} alt="Speaking Code" className="absolute inset-0 w-full h-full object-cover opacity-60" />
                     <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent" />
                   </div>
-                  <div className="relative z-10 p-6 sm:p-8 flex flex-col flex-1">
-                    <div className="flex gap-2 mb-3">
+                  <div className="relative z-10 p-5 sm:p-8 flex flex-col flex-1 min-w-0">
+                    <div className="flex flex-wrap gap-2 mb-3">
                       <Badge className="bg-cyan-500/20 border-cyan-500/30 text-cyan-400 text-xs"><Sparkles className="w-3 h-3 mr-1" /> Technical Series</Badge>
                       <Badge className="bg-emerald-500/20 border-emerald-500/30 text-emerald-400 text-xs">Technology</Badge>
                       <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400 text-xs">Non-Fiction</Badge>

@@ -107,7 +107,7 @@ export default function BookReader() {
       try {
         setLoading(true);
         const res = await fetch(`/api/ebook/catalog/${slug}/toc`);
-        if (!res.ok) throw new Error("Failed to load book table of contents. Are you sure you bought it?");
+        if (!res.ok) throw new Error("This book couldn't be loaded. It may not be available yet — check the catalog for available titles.");
         const data = await res.json();
         setToc(data);
         if (data.length > 0) {
