@@ -272,6 +272,51 @@ function AuthorEarningsDashboard({ userId }: { userId: string }) {
   );
 }
 
+function BookCard({ book }: { book: any }) {
+  const getCover = () => {
+    if (book.coverImageUrl) return book.coverImageUrl;
+    if (book.category === 'fiction') return '/images/cover-placeholder-fiction.png';
+    if (book.subcategory?.toLowerCase().includes('investig')) return '/images/cover-placeholder-investigation.png';
+    if (book.subcategory?.toLowerCase().includes('tech')) return '/images/cover-placeholder-technology.png';
+    return '/images/cover-placeholder-nonfiction.png';
+  };
+
+  return (
+    <Link href={`/${book.slug || book.id}/read`}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        className="w-[200px] sm:w-[240px] shrink-0 snap-start group cursor-pointer"
+      >
+        <div className="relative h-[280px] sm:h-[320px] rounded-xl overflow-hidden border border-white/10 hover:border-cyan-500/40 transition-all duration-500 bg-slate-900/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)]">
+          <div className="absolute inset-0 z-0">
+            <img src={getCover()} alt={book.title} className="w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/20" />
+          </div>
+          <div className="relative z-10 p-4 flex flex-col justify-end h-full">
+            <div className="flex gap-1.5 mb-2">
+              <Badge className="bg-emerald-500/20 text-emerald-400 border-none text-[10px]">
+                {book.price === 0 ? "Free" : `$${(book.price / 100).toFixed(2)}`}
+              </Badge>
+              {parseFloat(book.rating) > 0 && (
+                <Badge className="bg-purple-500/20 text-purple-300 border-none gap-0.5 text-[10px]">
+                  <Star className="w-2.5 h-2.5 fill-purple-300" />{parseFloat(book.rating).toFixed(1)}
+                </Badge>
+              )}
+            </div>
+            <h4 className="text-sm sm:text-base font-display font-bold text-white leading-snug mb-1 line-clamp-2 group-hover:text-cyan-300 transition-colors">
+              {book.title}
+            </h4>
+            <p className="text-[11px] text-white/40 truncate mb-2">by {book.authorName}</p>
+            <p className="text-[11px] text-white/50 line-clamp-2 leading-relaxed">{book.description}</p>
+          </div>
+        </div>
+      </motion.div>
+    </Link>
+  );
+}
+
 export default function TrustBook() {
   const [activeTab, setActiveTab] = useState('discover');
   const [showSubmitForm, setShowSubmitForm] = useState(false);
@@ -489,215 +534,192 @@ export default function TrustBook() {
         </div>
       </div>
 
-      <section id="section-discover" className="py-16 relative">
+      <section id="section-discover" className="py-12 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <Badge className="mb-4 px-3 py-1.5 bg-purple-500/10 border-purple-500/30 text-purple-400 text-xs">
-              <Star className="w-3 h-3 mr-1" /> Featured Publication
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black mb-4">
-              <span className="bg-gradient-to-r from-purple-400 via-cyan-400 to-red-400 bg-clip-text text-transparent">Through The Veil</span>
-            </h2>
-            <p className="text-white/50 max-w-xl mx-auto text-sm sm:text-base">
-              A 107,000-word investigation into the hidden architecture of history. 52 chapters. 13 parts.
-            </p>
-          </motion.div>
+          {/* ── Compact Featured Bento Grid ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-8">
+            {/* Through The Veil — Featured Hero Card */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="lg:col-span-7 relative rounded-2xl overflow-hidden border border-white/10 group h-[320px] sm:h-[360px]">
+              <img src={featuredImg} alt="Through The Veil" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+              <Badge className="absolute top-4 left-4 bg-cyan-500/20 border-cyan-500/30 text-cyan-400 backdrop-blur-md z-10">
+                <Sparkles className="w-3 h-3 mr-1" /> Featured
+              </Badge>
+              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 z-10">
+                <div className="flex gap-2 mb-2">
+                  <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400 text-xs">Non-Fiction</Badge>
+                  <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400 text-xs">Investigation</Badge>
+                </div>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-black text-white mb-2 group-hover:text-cyan-300 transition-colors">Through The Veil</h2>
+                <p className="text-white/50 text-sm line-clamp-2 mb-4 max-w-lg">
+                  A 107,000-word investigation into the hidden architecture of history. What if the most important name was deliberately changed?
+                </p>
+                <div className="flex flex-wrap gap-3 items-center">
+                  <Link href="/veil/read">
+                    <Button size="sm" className="gap-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-lg rounded-lg" data-testid="button-read-now">
+                      <Eye className="w-4 h-4" /> Preview
+                    </Button>
+                  </Link>
+                  <Link href="/veil/read">
+                    <Button size="sm" className="gap-2 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-lg" data-testid="button-buy-veil">
+                      <Sparkles className="w-4 h-4" /> $4.99
+                    </Button>
+                  </Link>
+                  <span className="text-white/25 text-xs hidden sm:inline">$9.99 on Amazon</span>
+                </div>
+              </div>
+            </motion.div>
 
-          <div className="flex flex-col lg:flex-row gap-8 mb-12">
-            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full lg:w-1/2">
-              <div className="relative rounded-3xl overflow-hidden aspect-[4/5] sm:aspect-video lg:aspect-auto lg:h-[600px] border border-white/10 shadow-[0_0_50px_rgba(6,182,212,0.15)] group">
-                <img src={featuredImg} alt="Through The Veil" className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-slate-950/40 lg:to-slate-950" />
-                <Badge className="absolute top-6 left-6 bg-cyan-500/20 border-cyan-500/30 text-cyan-400 backdrop-blur-md">
-                  <Sparkles className="w-3 h-3 mr-1" /> Launch Title
-                </Badge>
-              </div>
-            </motion.div>
-            
-            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full lg:w-1/2 flex flex-col justify-center py-6 lg:py-12 lg:pr-8">
-              <div className="flex gap-2 mb-4">
-                 <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400">Non-Fiction</Badge>
-                 <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400">Investigation</Badge>
-              </div>
-              <h3 className="text-4xl sm:text-5xl md:text-6xl font-display font-black text-white mb-6">Through The Veil</h3>
-              <p className="text-white/60 text-lg leading-relaxed mb-6 max-w-xl">
-                What if the most important name in history was deliberately changed — and the evidence has been hiding in plain sight for centuries?
-              </p>
-              <div className="flex flex-wrap gap-2 mb-8">
-                {["Hidden History", "Ancient Texts", "Institutional Power", "Documentary"].map(tag => (
-                  <span key={tag} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 text-sm">{tag}</span>
+            {/* Right Column — Stats + Speaking Code */}
+            <div className="lg:col-span-5 flex flex-col gap-4">
+              {/* Stats Row */}
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="grid grid-cols-4 gap-2">
+                {READER_STATS.map((stat, i) => (
+                  <GlassCard key={stat.label} glow={i === 0}>
+                    <div className="p-3 sm:p-4 flex flex-col items-center justify-center text-center">
+                      <stat.icon className="w-4 h-4 text-cyan-400 mb-1.5" />
+                      <div className="text-lg sm:text-xl font-display font-black text-white">{stat.value}</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">{stat.label}</div>
+                    </div>
+                  </GlassCard>
                 ))}
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Link href="/veil/read">
-                  <Button size="lg" className="h-14 w-full sm:w-auto px-8 gap-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-xl shadow-cyan-900/40 rounded-xl" data-testid="button-read-now">
-                    <Eye className="w-5 h-5" /> Preview First Chapter
-                  </Button>
-                </Link>
-                <Link href="/veil/read">
-                  <Button size="lg" className="h-14 w-full sm:w-auto px-8 gap-2 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 shadow-xl shadow-purple-900/40 rounded-xl" data-testid="button-buy-veil">
-                    <Sparkles className="w-5 h-5" /> Buy Full Access ($4.99)
-                  </Button>
-                </Link>
-              </div>
-              <p className="text-white/30 text-sm">$4.99 on Trust Book · $9.99 on Amazon</p>
-            </motion.div>
-          </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {READER_STATS.map((stat, i) => (
-              <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }}>
-                <GlassCard glow={i === 0}>
-                  <div className="p-6 flex flex-col items-center justify-center text-center h-full min-h-[140px]">
-                    <stat.icon className="w-6 h-6 text-cyan-400 mb-3" />
-                    <div className="text-3xl font-display font-black text-white mb-1">{stat.value}</div>
-                    <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">{stat.label}</div>
-                  </div>
-                </GlassCard>
               </motion.div>
-            ))}
-            
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="col-span-2 lg:col-span-4 mt-4">
-              <GlassCard glow>
-                <div className="relative overflow-hidden rounded-xl flex flex-col md:flex-row">
-                  <div className="relative w-full md:w-1/3 h-48 sm:h-64 md:h-auto md:min-h-[300px] shrink-0 overflow-hidden">
-                    <img src={readerImg} alt="Speaking Code" className="absolute inset-0 w-full h-full object-cover opacity-60" />
-                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent" />
-                  </div>
-                  <div className="relative z-10 p-5 sm:p-8 flex flex-col flex-1 min-w-0">
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      <Badge className="bg-cyan-500/20 border-cyan-500/30 text-cyan-400 text-xs"><Sparkles className="w-3 h-3 mr-1" /> Technical Series</Badge>
-                      <Badge className="bg-emerald-500/20 border-emerald-500/30 text-emerald-400 text-xs">Technology</Badge>
-                      <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400 text-xs">Non-Fiction</Badge>
+
+              {/* Speaking Code Card */}
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="flex-1">
+                <GlassCard glow>
+                  <div className="relative overflow-hidden rounded-xl flex flex-col sm:flex-row h-full min-h-[180px]">
+                    <div className="relative w-full sm:w-2/5 h-32 sm:h-auto shrink-0 overflow-hidden">
+                      <img src={readerImg} alt="Speaking Code" className="absolute inset-0 w-full h-full object-cover opacity-50" />
+                      <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent" />
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-display font-black text-white mb-3">Speaking Code</h3>
-                    <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-2xl">
-                      The definitive guide to Lume and the AI-native programming revolution. Learn how to bridge the gap between human intent and machine execution without learning an arbitrary syntax. 
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-5">
-                      {["Programming", "AI", "Software Architecture", "Lume"].map(tag => (
-                        <span key={tag} className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/50 text-xs">{tag}</span>
-                      ))}
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Button className="gap-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500" data-testid="button-buy-speaking-code" onClick={() => setActiveTab('browse')}>
-                        <Download className="w-4 h-4" /> Download Free eBook
+                    <div className="relative z-10 p-4 sm:p-5 flex flex-col flex-1 min-w-0 justify-center">
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        <Badge className="bg-cyan-500/20 border-cyan-500/30 text-cyan-400 text-[10px]"><Sparkles className="w-2.5 h-2.5 mr-0.5" /> Technical</Badge>
+                        <Badge className="bg-emerald-500/20 border-emerald-500/30 text-emerald-400 text-[10px]">Free</Badge>
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-display font-black text-white mb-1.5">Speaking Code</h3>
+                      <p className="text-white/50 text-xs leading-relaxed mb-3 line-clamp-2">
+                        The guide to Lume and the AI-native programming revolution.
+                      </p>
+                      <Button size="sm" className="gap-1.5 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-xs w-fit" data-testid="button-buy-speaking-code" onClick={() => setActiveTab('browse')}>
+                        <Download className="w-3.5 h-3.5" /> Free eBook
                       </Button>
                     </div>
                   </div>
-                </div>
-              </GlassCard>
-            </motion.div>
+                </GlassCard>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="section-browse" className="py-24 relative overflow-hidden">
+      <section id="section-browse" className="py-12 relative overflow-hidden">
         {/* Cinematic Ambient Orbs */}
-        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] rounded-full bg-cyan-500/5 blur-[120px] mix-blend-screen pointer-events-none -translate-y-1/2" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] rounded-full bg-purple-500/5 blur-[120px] mix-blend-screen pointer-events-none translate-y-1/2" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/80 to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-cyan-500/5 blur-[120px] mix-blend-screen pointer-events-none -translate-y-1/2" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-purple-500/5 blur-[120px] mix-blend-screen pointer-events-none translate-y-1/2" />
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <Badge className="mb-4 px-4 py-2 bg-cyan-500/10 border-cyan-500/30 text-cyan-400 text-sm backdrop-blur-sm">
-              <Grid3X3 className="w-4 h-4 mr-2" /> Browse Catalog
-            </Badge>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-black mb-6">
-              <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Explore by Category</span>
-            </h2>
-            <p className="text-white/50 max-w-xl mx-auto text-lg">
-              Browse our growing collection by genre. From fiction to investigation — find your next read, instantly.
-            </p>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex items-end justify-between mb-8">
+            <div>
+              <Badge className="mb-3 px-3 py-1.5 bg-cyan-500/10 border-cyan-500/30 text-cyan-400 text-xs backdrop-blur-sm">
+                <Grid3X3 className="w-3.5 h-3.5 mr-1.5" /> Catalog
+              </Badge>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black">
+                <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Explore by Category</span>
+              </h2>
+            </div>
           </motion.div>
 
-          <div className="flex flex-wrap gap-3 justify-center mb-12">
+          {/* Category Filter Pills */}
+          <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-6">
             <button onClick={() => { setSelectedCategory(null); setSelectedSubcategory(null); fetchCatalog(); }}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all min-h-[44px] ${
-                !selectedCategory ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 hover:text-white'
-              }`} data-testid="filter-all">All Books</button>
+              className={`px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap min-h-[36px] ${
+                !selectedCategory ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
+              }`} data-testid="filter-all">All</button>
             {Object.entries(BOOK_CATEGORIES).map(([key, cat]) => (
               <button key={key} onClick={() => { setSelectedCategory(key); setSelectedSubcategory(null); fetchCatalog(key); }}
-                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all min-h-[44px] ${
-                  selectedCategory === key && !selectedSubcategory ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 hover:text-white'
+                className={`px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap min-h-[36px] ${
+                  selectedCategory === key ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
                 }`} data-testid={`filter-${key}`}>{cat.label}</button>
             ))}
           </div>
 
           {selectedCategory && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="flex flex-wrap gap-2 justify-center mb-10">
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-6">
               {BOOK_CATEGORIES[selectedCategory as keyof typeof BOOK_CATEGORIES]?.subcategories.map(sub => (
                 <button key={sub} onClick={() => { setSelectedSubcategory(sub); fetchCatalog(selectedCategory, sub); }}
-                  className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
-                    selectedSubcategory === sub ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-white/[0.03] text-white/40 border border-white/5 hover:bg-white/10 hover:text-white/60'
+                  className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+                    selectedSubcategory === sub ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-white/[0.03] text-white/40 border border-white/5 hover:bg-white/10'
                   }`} data-testid={`subfilter-${sub}`}>{sub}</button>
               ))}
             </motion.div>
           )}
 
           {catalogLoading ? (
-            <div className="flex justify-center py-24">
-              <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
+            <div className="flex justify-center py-16">
+              <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
             </div>
           ) : catalog.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 auto-rows-[minmax(320px,auto)] md:auto-rows-[420px]">
-              {catalog.map((book: any, i: number) => {
-                const isFeatured = (parseFloat(book.rating) > 4.5 && i % 4 === 0) || catalog.length === 1;
-                const isWide = !isFeatured && (i % 5 === 2);
-                
-                const getCover = () => {
-                  if (book.coverImageUrl) return book.coverImageUrl;
-                  if (book.category === 'fiction') return '/images/cover-placeholder-fiction.png';
-                  if (book.subcategory?.toLowerCase().includes('investig')) return '/images/cover-placeholder-investigation.png';
-                  if (book.subcategory?.toLowerCase().includes('tech')) return '/images/cover-placeholder-technology.png';
-                  return '/images/cover-placeholder-nonfiction.png';
-                };
+            <div className="space-y-8">
+              {/* Group books by category and render carousel rows */}
+              {(() => {
+                const grouped: Record<string, any[]> = {};
+                catalog.forEach((book: any) => {
+                  const cat = book.category === 'fiction' ? 'Fiction' : (book.subcategory || 'Non-Fiction');
+                  if (!grouped[cat]) grouped[cat] = [];
+                  grouped[cat].push(book);
+                });
 
-                return (
-                  <motion.div key={book.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                     className={`min-w-0 overflow-hidden ${isFeatured ? 'md:col-span-2 xl:col-span-2 md:row-span-2' : isWide ? 'md:col-span-2 xl:col-span-2' : ''}`}>
-                    <div className="relative h-full w-full rounded-2xl overflow-hidden group border border-white/10 hover:border-cyan-500/50 transition-colors duration-500 bg-slate-900/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]">
-                      <div className="absolute inset-0 z-0">
-                        <img src={getCover()} alt={book.title} className="w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-105 transition-all duration-1000" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent" />
+                // If only one group or few books, show as "All Books"
+                const groups = Object.entries(grouped);
+                const showAsRows = groups.length > 1 && catalog.length > 4;
+
+                if (!showAsRows) {
+                  return (
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-display font-bold text-white/80">All Books</h3>
+                        <span className="text-xs text-white/30">{catalog.length} titles</span>
                       </div>
-                      <div className="relative z-10 p-4 sm:p-6 flex flex-col justify-end h-full min-w-0">
-                        <div className="mb-3 min-w-0">
-                          <h3 className={`font-display font-black text-white leading-tight min-w-0 break-words ${isFeatured ? 'text-2xl sm:text-3xl md:text-4xl' : 'text-xl sm:text-2xl'} group-hover:text-cyan-300 transition-colors`}>
-                            {book.title}
-                          </h3>
-                        </div>
-                        <p className={`text-white/40 mb-3 truncate ${isFeatured ? 'text-sm sm:text-base' : 'text-sm'}`}>by {book.authorName}</p>
-                        <p className={`text-white/60 mb-4 sm:mb-6 ${isFeatured ? 'line-clamp-3 text-sm sm:text-base' : 'line-clamp-2 text-sm'}`}>{book.description}</p>
-                        
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-auto pt-3 sm:pt-4 border-t border-white/10 gap-3 sm:gap-2">
-                          <div className="flex flex-wrap gap-1.5 sm:gap-2 min-w-0">
-                            {book.category && <Badge className="bg-white/10 hover:bg-white/20 border-transparent text-white/70 backdrop-blur-md text-xs">{book.category === 'fiction' ? 'Fiction' : 'Non-Fiction'}</Badge>}
-                            <Badge className="bg-emerald-500/20 text-emerald-400 border-none text-xs">{book.price === 0 ? "Free" : `$${(book.price / 100).toFixed(2)}`}</Badge>
-                            {parseFloat(book.rating) > 0 && (
-                              <Badge className="bg-purple-500/20 text-purple-300 border-none gap-1 text-xs"><Star className="w-3 h-3 fill-purple-300" />{parseFloat(book.rating).toFixed(1)}</Badge>
-                            )}
-                          </div>
-                          
-                          <Link href={`/veil/read?book=${book.slug || book.id}`}>
-                            <Button size="sm" variant="ghost" className="rounded-full hover:bg-cyan-500/20 hover:text-cyan-400 text-white gap-2 shrink-0 w-full sm:w-auto justify-center">
-                              Read <ArrowRight className="w-4 h-4" />
-                            </Button>
-                          </Link>
+                      <div className="relative">
+                        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                          {catalog.map((book: any) => (
+                            <BookCard key={book.id} book={book} />
+                          ))}
                         </div>
                       </div>
                     </div>
-                  </motion.div>
-                );
-              })}
+                  );
+                }
+
+                return groups.map(([category, books]) => (
+                  <div key={category}>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-display font-bold text-white/80">{category}</h3>
+                      <span className="text-xs text-white/30">{books.length} titles</span>
+                    </div>
+                    <div className="relative">
+                      <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                        {books.map((book: any) => (
+                          <BookCard key={book.id} book={book} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ));
+              })()}
             </div>
           ) : (
-            <div className="text-center py-24 glassmorphism rounded-3xl border border-white/5 max-w-2xl mx-auto">
-              <BookOpen className="w-16 h-16 text-slate-700 mx-auto mb-6" />
-              <h3 className="text-2xl font-display font-bold text-white mb-2">No Books Found</h3>
-              <p className="text-white/40 text-base mb-8">This category is currently empty. Be the first to publish your work.</p>
-              <Button onClick={() => scrollToSection('publish')} size="lg" className="bg-white/10 hover:bg-white/20 text-white rounded-xl gap-2 min-h-[56px] px-8" data-testid="button-publish-first">
-                <Upload className="w-5 h-5" /> Publish Your Book
+            <div className="text-center py-16 glassmorphism rounded-2xl border border-white/5 max-w-lg mx-auto">
+              <BookOpen className="w-12 h-12 text-slate-700 mx-auto mb-4" />
+              <h3 className="text-xl font-display font-bold text-white mb-2">No Books Found</h3>
+              <p className="text-white/40 text-sm mb-6">This category is empty. Be the first to publish.</p>
+              <Button onClick={() => scrollToSection('publish')} size="sm" className="bg-white/10 hover:bg-white/20 text-white rounded-lg gap-2" data-testid="button-publish-first">
+                <Upload className="w-4 h-4" /> Publish Your Book
               </Button>
             </div>
           )}
