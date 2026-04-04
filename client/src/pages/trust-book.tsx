@@ -575,7 +575,7 @@ export default function TrustBook() {
             <div className="lg:col-span-5 flex flex-col gap-4">
               {/* Stats Row */}
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                className="grid grid-cols-4 gap-2">
+                className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {READER_STATS.map((stat, i) => (
                   <GlassCard key={stat.label} glow={i === 0}>
                     <div className="p-3 sm:p-4 flex flex-col items-center justify-center text-center">
@@ -592,7 +592,7 @@ export default function TrustBook() {
                 className="flex-1">
                 <GlassCard glow>
                   <div className="relative overflow-hidden rounded-xl flex flex-col sm:flex-row h-full min-h-[180px]">
-                    <div className="relative w-full sm:w-2/5 h-32 sm:h-auto shrink-0 overflow-hidden">
+                    <div className="relative w-full sm:w-2/5 h-36 sm:h-auto shrink-0 overflow-hidden">
                       <img src={readerImg} alt="Speaking Code" className="absolute inset-0 w-full h-full object-cover opacity-50" />
                       <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent" />
                     </div>
@@ -623,12 +623,12 @@ export default function TrustBook() {
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-purple-500/5 blur-[120px] mix-blend-screen pointer-events-none translate-y-1/2" />
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex items-end justify-between mb-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-6 sm:mb-8">
             <div>
               <Badge className="mb-3 px-3 py-1.5 bg-cyan-500/10 border-cyan-500/30 text-cyan-400 text-xs backdrop-blur-sm">
                 <Grid3X3 className="w-3.5 h-3.5 mr-1.5" /> Catalog
               </Badge>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black">
+              <h2 className="text-xl sm:text-3xl md:text-4xl font-display font-black">
                 <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Explore by Category</span>
               </h2>
             </div>
@@ -637,12 +637,12 @@ export default function TrustBook() {
           {/* Category Filter Pills */}
           <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-6">
             <button onClick={() => { setSelectedCategory(null); setSelectedSubcategory(null); fetchCatalog(); }}
-              className={`px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap min-h-[36px] ${
+              className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all whitespace-nowrap min-h-[40px] ${
                 !selectedCategory ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
               }`} data-testid="filter-all">All</button>
             {Object.entries(BOOK_CATEGORIES).map(([key, cat]) => (
               <button key={key} onClick={() => { setSelectedCategory(key); setSelectedSubcategory(null); fetchCatalog(key); }}
-                className={`px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap min-h-[36px] ${
+                className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all whitespace-nowrap min-h-[40px] ${
                   selectedCategory === key ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
                 }`} data-testid={`filter-${key}`}>{cat.label}</button>
             ))}
