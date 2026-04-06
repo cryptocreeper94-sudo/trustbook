@@ -1,80 +1,102 @@
-import { Sun, Moon, Monitor } from "lucide-react";
-import { useEffect } from "react";
-import { usePreferences } from "@/lib/store";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
-export function ThemeToggle() {
-  const { preferences, setTheme } = usePreferences();
+type Theme = "dark" | "light" | "system";
 
-  useEffect(() => {
-    const root = document.documentElement;
-    
-    if (preferences.theme === "system") {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      root.classList.toggle("dark", mediaQuery.matches);
-      root.classList.toggle("light", !mediaQuery.matches);
-      
-      const listener = (e: MediaQueryListEvent) => {
-        root.classList.toggle("dark", e.matches);
-        root.classList.toggle("light", !e.matches);
-      };
-      mediaQuery.addEventListener("change", listener);
-      return () => mediaQuery.removeEventListener("change", listener);
-    } else {
-      root.classList.remove("dark", "light");
-      root.classList.add(preferences.theme);
-    }
-  }, [preferences.theme]);
+function getStoredTheme(): Theme {
+  try {
+    const stored = localStorage.getItem("dwtl-theme");
+    if (stored === "dark" || stored === "light" || stored === "system") return stored;
+  } catch {}
+  return "dark";
+}
 
-  const icons = {
-    dark: Moon,
-    light: Sun,
-    system: Monitor,
+function applyTheme(theme: Theme) {
+  const root = document.documentElement;
+  root.classList.remove("dark", "light");
+  if (theme === "system") {
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    root.classList.add(isDark ? "dark" : "light");
+  } else {
+    root.classList.add(theme);
+  }
+}
+
+/** Floating theme toggle — renders as a small pill in the bottom-left corner.
+ *  Drop into any app's root component: `<FloatingThemeToggle />` */
+export function FloatingThemeToggle() {
+  const [theme, setThemeState] = useState<Theme>(getStoredTheme);
+
+  const setTheme = (t: Theme) => {
+    setThemeState(t);
+    localStorage.setItem("dwtl-theme", t);
+    applyTheme(t);
   };
 
-  const Icon = icons[preferences.theme];
+  useEffect(() => {
+    applyTheme(theme);
+    if (theme === "system") {
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      const handler = () => applyTheme("system");
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
+    }
+  }, [theme]);
+
+  const icons: Record<Theme, string> = { dark: "🌙", light: "☀️", system: "🖥️" };
+  const labels: Record<Theme, string> = { dark: "Dark", light: "Light", system: "Auto" };
+  const next: Record<Theme, Theme> = { dark: "light", light: "system", system: "dark" };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-9 h-9 hover:bg-white/5"
-          data-testid="button-theme-toggle"
-        >
-          <Icon className="w-4 h-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-black/90 border-white/20 backdrop-blur-xl">
-        <DropdownMenuItem
-          onClick={() => setTheme("dark")}
-          className="flex items-center gap-2 cursor-pointer hover:bg-white/10"
-        >
-          <Moon className="w-4 h-4" />
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => setTheme("light")}
-          className="flex items-center gap-2 cursor-pointer hover:bg-white/10"
-        >
-          <Sun className="w-4 h-4" />
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => setTheme("system")}
-          className="flex items-center gap-2 cursor-pointer hover:bg-white/10"
-        >
-          <Monitor className="w-4 h-4" />
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <button
+      onClick={() => setTheme(next[theme])}
+      className="fixed bottom-4 left-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 hover:scale-105 shadow-lg"
+      style={{
+        background: 'var(--glass-bg, rgba(16,16,26,0.72))',
+        border: '1px solid var(--glass-border, rgba(255,255,255,0.08))',
+        backdropFilter: 'blur(12px)',
+        color: 'var(--text-primary, #fff)',
+      }}
+      title={`Theme: ${theme} — click to switch`}
+      data-testid="button-theme-toggle"
+    >
+      <span>{icons[theme]}</span>
+      <span style={{ color: 'var(--text-muted, rgba(255,255,255,0.5))' }}>{labels[theme]}</span>
+    </button>
+  );
+}
+
+/** Inline theme toggle — for embedding in navbars/headers */
+export function ThemeToggle() {
+  const [theme, setThemeState] = useState<Theme>(getStoredTheme);
+
+  const setTheme = (t: Theme) => {
+    setThemeState(t);
+    localStorage.setItem("dwtl-theme", t);
+    applyTheme(t);
+  };
+
+  useEffect(() => {
+    applyTheme(theme);
+    if (theme === "system") {
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      const handler = () => applyTheme("system");
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
+    }
+  }, [theme]);
+
+  const icons: Record<Theme, string> = { dark: "🌙", light: "☀️", system: "🖥️" };
+  const next: Record<Theme, Theme> = { dark: "light", light: "system", system: "dark" };
+
+  return (
+    <button
+      onClick={() => setTheme(next[theme])}
+      className="w-8 h-8 flex items-center justify-center rounded-lg text-sm transition-all duration-200 hover:scale-110"
+      style={{ background: 'var(--glass-bg, rgba(255,255,255,0.1))', border: '1px solid var(--glass-border, rgba(255,255,255,0.1))' }}
+      title={`Theme: ${theme}`}
+      data-testid="button-theme-toggle"
+    >
+      {icons[theme]}
+    </button>
   );
 }

@@ -8,6 +8,7 @@ import BookReader from "@/pages/book-reader";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
+import { FloatingThemeToggle } from "@/components/theme-toggle";
 
 function AppContent() {
   const { isLoading } = useAuth();
@@ -22,6 +23,7 @@ function AppContent() {
 
   return (
     <Switch>
+      <FloatingThemeToggle />
       <Route path="/" component={TrustBook} />
       <Route path="/:slug/read" component={BookReader} />
       <Route component={NotFound} />
