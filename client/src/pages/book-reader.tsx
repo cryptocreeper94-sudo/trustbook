@@ -442,7 +442,7 @@ export default function BookReader() {
     <div className="min-h-screen bg-black text-white selection:bg-cyan-500/30 font-serif">
       {/* Decorative gradients */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 right-1/4 w-[50vh] h-[50vh] bg-purple-900/10 rounded-full blur-[120px]" />
+        <div className="absolute top-0 right-1/4 w-[50vh] h-[50vh] bg-sky-900/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 left-1/4 w-[60vh] h-[60vh] bg-cyan-900/10 rounded-full blur-[150px]" />
       </div>
 
@@ -529,7 +529,7 @@ export default function BookReader() {
               <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                 {toc.map((vol, vIdx) => (
                   <div key={vol.id} className="mb-6 last:mb-0">
-                    <h3 className="text-xs font-bold text-purple-400 uppercase tracking-widest mb-1">{vol.title}</h3>
+                    <h3 className="text-xs font-bold text-sky-400 uppercase tracking-widest mb-1">{vol.title}</h3>
                     <div className="text-lg text-white mb-3 font-medium">{vol.subtitle}</div>
                     
                     <div className="space-y-1">
@@ -590,7 +590,7 @@ export default function BookReader() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="prose prose-invert prose-p:text-slate-300 prose-p:leading-relaxed prose-h1:text-4xl prose-h1:font-bold prose-h1:text-white prose-h2:text-2xl prose-h2:text-cyan-300 prose-h3:text-purple-300 prose-a:text-cyan-400 hover:prose-a:text-cyan-300"
+            className="prose prose-invert prose-p:text-slate-300 prose-p:leading-relaxed prose-h1:text-4xl prose-h1:font-bold prose-h1:text-white prose-h2:text-2xl prose-h2:text-cyan-300 prose-h3:text-sky-300 prose-a:text-cyan-400 hover:prose-a:text-cyan-300"
           >
             <div className="mb-12 text-center">
               <span className="text-sm font-bold tracking-widest text-cyan-400 uppercase mb-2 block object-contain">
@@ -604,7 +604,7 @@ export default function BookReader() {
                   {chapterContent.partTitle}
                 </div>
               )}
-              <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-purple-500 mx-auto mt-8 rounded-full" />
+              <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-sky-500 mx-auto mt-8 rounded-full" />
             </div>
 
             <ReactMarkdown 
@@ -643,7 +643,7 @@ export default function BookReader() {
 
         {/* ── Animate This Chapter ── */}
         <div className="mt-12 mb-8 border-t border-white/10 pt-8">
-          <div className="p-6 text-center rounded-xl bg-gradient-to-r from-cyan-500/5 to-purple-500/5 border border-cyan-500/20">
+          <div className="p-6 text-center rounded-xl bg-gradient-to-r from-cyan-500/5 to-sky-500/5 border border-cyan-500/20">
             <div className="text-2xl mb-2">✨</div>
             <h3 className="text-lg font-bold text-white mb-2">Animate This Chapter</h3>
             <p className="text-sm text-slate-400 mb-4 max-w-md mx-auto">
@@ -660,7 +660,7 @@ export default function BookReader() {
               <a
                 href={`https://trustgen.tlid.io/studio?mode=story&book=${slug}&tier=premium`}
                 target="_blank" rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold text-sm hover:from-purple-400 hover:to-pink-400 transition"
+                className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-sky-500 to-pink-500 text-white font-semibold text-sm hover:from-sky-400 hover:to-pink-400 transition"
               >
                 Premium HD — $6.99/ch
               </a>

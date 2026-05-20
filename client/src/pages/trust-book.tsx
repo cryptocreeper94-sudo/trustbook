@@ -26,11 +26,11 @@ const audioImg = "/images/trust-book-audio.jpg";
 
 const PLATFORM_FEATURES = [
   { icon: BookOpen, title: "Immersive E-Reader", desc: "Full-screen reading with adjustable fonts, themes, and progress tracking across all devices.", gradient: "from-cyan-500 to-blue-600", image: "/images/feature-ereader.png" },
-  { icon: Headphones, title: "AI Narration", desc: "Every book narrated by premium AI voices. Listen while you commute, exercise, or unwind.", gradient: "from-purple-500 to-pink-600", image: "/images/feature-narration.png" },
-  { icon: Download, title: "Multi-Format", desc: "Read online, download PDF, or export EPUB. Your library, your format, your choice.", gradient: "from-purple-500 to-cyan-600", image: "/images/feature-multiformat.png" },
+  { icon: Headphones, title: "AI Narration", desc: "Every book narrated by premium AI voices. Listen while you commute, exercise, or unwind.", gradient: "from-sky-500 to-pink-600", image: "/images/feature-narration.png" },
+  { icon: Download, title: "Multi-Format", desc: "Read online, download PDF, or export EPUB. Your library, your format, your choice.", gradient: "from-sky-500 to-cyan-600", image: "/images/feature-multiformat.png" },
   { icon: Smartphone, title: "Mobile-First PWA", desc: "Install on any device. Works offline. True app experience without the app store.", gradient: "from-emerald-500 to-teal-600", image: "/images/feature-mobile.png" },
   { icon: Shield, title: "Blockchain Verified", desc: "Every publication timestamped on the Trust Layer blockchain. Provenance you can verify.", gradient: "from-red-500 to-rose-600", image: "/images/feature-blockchain.png" },
-  { icon: Users, title: "Author Publishing", desc: "Publish your own work. Transparent royalties tracked on-chain. No gatekeepers.", gradient: "from-indigo-500 to-violet-600", image: "/images/feature-publishing.png" },
+  { icon: Users, title: "Author Publishing", desc: "Publish your own work. Transparent royalties tracked on-chain. No gatekeepers.", gradient: "from-indigo-500 to-cyan-600", image: "/images/feature-publishing.png" },
 ];
 
 const READER_STATS = [
@@ -48,7 +48,7 @@ const TESTIMONIALS = [
 
 const STATUS_CONFIG: Record<string, { icon: any; color: string; label: string }> = {
   draft: { icon: Clock, color: 'text-slate-400', label: 'Draft' },
-  pending_review: { icon: AlertCircle, color: 'text-purple-400', label: 'Pending Review' },
+  pending_review: { icon: AlertCircle, color: 'text-sky-400', label: 'Pending Review' },
   approved: { icon: CheckCircle, color: 'text-emerald-400', label: 'Approved' },
   rejected: { icon: XCircle, color: 'text-red-400', label: 'Rejected' },
   published: { icon: CheckCircle, color: 'text-cyan-400', label: 'Published' },
@@ -174,7 +174,7 @@ function AuthorEarningsDashboard({ userId }: { userId: string }) {
               </div>
               <div className="p-3 rounded-xl bg-white/5 border border-white/10">
                 <p className="text-white/40 text-xs">Pending Payout</p>
-                <p className="text-xl font-bold text-purple-400" data-testid="text-pending-payout">
+                <p className="text-xl font-bold text-sky-400" data-testid="text-pending-payout">
                   ${((stats?.pendingPayout || 0) / 100).toFixed(2)}
                 </p>
               </div>
@@ -203,9 +203,9 @@ function AuthorEarningsDashboard({ userId }: { userId: string }) {
             )}
 
             {!connectStatus?.onboardingComplete ? (
-              <div className="p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 mb-4">
+              <div className="p-4 rounded-xl bg-gradient-to-r from-sky-500/10 to-cyan-500/10 border border-sky-500/20 mb-4">
                 <div className="flex items-start gap-3">
-                  <CreditCard className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                  <CreditCard className="w-5 h-5 text-sky-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-white mb-1">Set Up Payouts</p>
                     <p className="text-xs text-white/50 mb-3">
@@ -216,7 +216,7 @@ function AuthorEarningsDashboard({ userId }: { userId: string }) {
                       onClick={handleConnectOnboarding}
                       disabled={connectLoading}
                       size="sm"
-                      className="bg-gradient-to-r from-purple-500 to-cyan-500 text-black font-semibold"
+                      className="bg-gradient-to-r from-sky-500 to-cyan-500 text-black font-semibold"
                       data-testid="button-connect-stripe"
                     >
                       {connectLoading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <ExternalLink className="w-4 h-4 mr-1" />}
@@ -254,7 +254,7 @@ function AuthorEarningsDashboard({ userId }: { userId: string }) {
                   {dashboard.recentEarnings.slice(0, 5).map((earning: any) => (
                     <div key={earning.id} className="flex items-center justify-between p-2 rounded-lg bg-white/5 text-sm" data-testid={`earning-row-${earning.id}`}>
                       <div className="flex items-center gap-2">
-                        <Badge className={earning.status === "paid" ? "bg-emerald-500/20 text-emerald-400 text-xs" : "bg-purple-500/20 text-purple-400 text-xs"}>
+                        <Badge className={earning.status === "paid" ? "bg-emerald-500/20 text-emerald-400 text-xs" : "bg-sky-500/20 text-sky-400 text-xs"}>
                           {earning.status}
                         </Badge>
                         <span className="text-white/60 text-xs">Book #{earning.bookId}</span>
@@ -300,8 +300,8 @@ function BookCard({ book }: { book: any }) {
                 {book.price === 0 ? "Free" : `$${(book.price / 100).toFixed(2)}`}
               </Badge>
               {parseFloat(book.rating) > 0 && (
-                <Badge className="bg-purple-500/20 text-purple-300 border-none gap-0.5 text-[10px]">
-                  <Star className="w-2.5 h-2.5 fill-purple-300" />{parseFloat(book.rating).toFixed(1)}
+                <Badge className="bg-sky-500/20 text-sky-300 border-none gap-0.5 text-[10px]">
+                  <Star className="w-2.5 h-2.5 fill-sky-300" />{parseFloat(book.rating).toFixed(1)}
                 </Badge>
               )}
             </div>
@@ -480,12 +480,12 @@ export default function TrustBook() {
       <KenBurnsHero>
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}
           className="relative z-10 text-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-6 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border-cyan-500/30 text-white text-sm backdrop-blur-sm" data-testid="badge-trust-book">
+          <Badge className="mb-6 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-sky-500/20 border-cyan-500/30 text-white text-sm backdrop-blur-sm" data-testid="badge-trust-book">
             <BookOpen className="w-4 h-4 mr-2 text-cyan-400" />
             Trust Layer Publishing
           </Badge>
           <h1 className="text-5xl sm:text-6xl md:text-8xl font-display font-black mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-2xl">Trust</span>
+            <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-pink-400 bg-clip-text text-transparent drop-shadow-2xl">Trust</span>
             <br /><span className="text-white drop-shadow-2xl">Book</span>
           </h1>
           <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-8 leading-relaxed">
@@ -493,7 +493,7 @@ export default function TrustBook() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/veil/read">
-              <Button size="lg" className="h-14 px-8 text-base gap-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-2xl shadow-cyan-500/25 rounded-xl" data-testid="button-read-featured">
+              <Button size="lg" className="h-14 px-8 text-base gap-2 bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-500 hover:to-sky-500 shadow-2xl shadow-cyan-500/25 rounded-xl" data-testid="button-read-featured">
                 <Eye className="w-5 h-5" /> Preview <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -522,7 +522,7 @@ export default function TrustBook() {
               <button key={tab.id} onClick={() => scrollToSection(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm whitespace-nowrap transition-all min-h-[44px] ${
                   activeTab === tab.id
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30'
+                    ? 'bg-gradient-to-r from-cyan-500/20 to-sky-500/20 text-white border border-cyan-500/30'
                     : 'text-white/40 hover:text-white/70 hover:bg-white/5'
                 }`}
                 data-testid={`tab-${tab.id}`}>
@@ -548,8 +548,8 @@ export default function TrustBook() {
               </Badge>
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 z-10">
                 <div className="flex gap-2 mb-2">
-                  <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400 text-xs">Non-Fiction</Badge>
-                  <Badge className="bg-purple-500/20 border-purple-500/30 text-purple-400 text-xs">Investigation</Badge>
+                  <Badge className="bg-sky-500/20 border-sky-500/30 text-sky-400 text-xs">Non-Fiction</Badge>
+                  <Badge className="bg-sky-500/20 border-sky-500/30 text-sky-400 text-xs">Investigation</Badge>
                 </div>
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-black text-white mb-2 group-hover:text-cyan-300 transition-colors">Through The Veil</h2>
                 <p className="text-white/50 text-sm line-clamp-2 mb-4 max-w-lg">
@@ -557,12 +557,12 @@ export default function TrustBook() {
                 </p>
                 <div className="flex flex-wrap gap-3 items-center">
                   <Link href="/veil/read">
-                    <Button size="sm" className="gap-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-lg rounded-lg" data-testid="button-read-now">
+                    <Button size="sm" className="gap-2 bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-500 hover:to-sky-500 shadow-lg rounded-lg" data-testid="button-read-now">
                       <Eye className="w-4 h-4" /> Preview
                     </Button>
                   </Link>
                   <Link href="/veil/read">
-                    <Button size="sm" className="gap-2 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-lg" data-testid="button-buy-veil">
+                    <Button size="sm" className="gap-2 bg-gradient-to-r from-sky-600 to-cyan-600 hover:from-sky-500 hover:to-cyan-500 rounded-lg" data-testid="button-buy-veil">
                       <Sparkles className="w-4 h-4" /> $4.99
                     </Button>
                   </Link>
@@ -622,7 +622,7 @@ export default function TrustBook() {
       <section id="section-browse" className="py-12 relative overflow-hidden">
         {/* Cinematic Ambient Orbs */}
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-cyan-500/5 blur-[120px] mix-blend-screen pointer-events-none -translate-y-1/2" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-purple-500/5 blur-[120px] mix-blend-screen pointer-events-none translate-y-1/2" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-sky-500/5 blur-[120px] mix-blend-screen pointer-events-none translate-y-1/2" />
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-6 sm:mb-8">
@@ -631,7 +631,7 @@ export default function TrustBook() {
                 <Grid3X3 className="w-3.5 h-3.5 mr-1.5" /> Catalog
               </Badge>
               <h2 className="text-xl sm:text-3xl md:text-4xl font-display font-black">
-                <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Explore by Category</span>
+                <span className="bg-gradient-to-r from-cyan-400 to-sky-400 bg-clip-text text-transparent">Explore by Category</span>
               </h2>
             </div>
           </motion.div>
@@ -640,12 +640,12 @@ export default function TrustBook() {
           <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-6">
             <button onClick={() => { setSelectedCategory(null); setSelectedSubcategory(null); fetchCatalog(); }}
               className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all whitespace-nowrap min-h-[40px] ${
-                !selectedCategory ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
+                !selectedCategory ? 'bg-gradient-to-r from-cyan-500/20 to-sky-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
               }`} data-testid="filter-all">All</button>
             {Object.entries(BOOK_CATEGORIES).map(([key, cat]) => (
               <button key={key} onClick={() => { setSelectedCategory(key); setSelectedSubcategory(null); fetchCatalog(key); }}
                 className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all whitespace-nowrap min-h-[40px] ${
-                  selectedCategory === key ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
+                  selectedCategory === key ? 'bg-gradient-to-r from-cyan-500/20 to-sky-500/20 text-white border border-cyan-500/30' : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
                 }`} data-testid={`filter-${key}`}>{cat.label}</button>
             ))}
           </div>
@@ -655,7 +655,7 @@ export default function TrustBook() {
               {BOOK_CATEGORIES[selectedCategory as keyof typeof BOOK_CATEGORIES]?.subcategories.map(sub => (
                 <button key={sub} onClick={() => { setSelectedSubcategory(sub); fetchCatalog(selectedCategory, sub); }}
                   className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
-                    selectedSubcategory === sub ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-white/[0.03] text-white/40 border border-white/5 hover:bg-white/10'
+                    selectedSubcategory === sub ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'bg-white/[0.03] text-white/40 border border-white/5 hover:bg-white/10'
                   }`} data-testid={`subfilter-${sub}`}>{sub}</button>
               ))}
             </motion.div>
@@ -731,11 +731,11 @@ export default function TrustBook() {
       <section id="section-library" className="py-16 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
-            <Badge className="mb-4 px-3 py-1.5 bg-purple-500/10 border-purple-500/30 text-purple-400 text-xs">
+            <Badge className="mb-4 px-3 py-1.5 bg-sky-500/10 border-sky-500/30 text-sky-400 text-xs">
               <Library className="w-3 h-3 mr-1" /> Personal Collection
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-display font-black mb-4">
-              <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">My Library</span>
+              <span className="bg-gradient-to-r from-sky-400 to-pink-400 bg-clip-text text-transparent">My Library</span>
             </h2>
             <p className="text-white/50 max-w-lg mx-auto text-sm">
               Your purchased books, reading progress, and authored works — all in one place.
@@ -767,7 +767,7 @@ export default function TrustBook() {
                           <h4 className="text-sm font-bold text-white mb-1">{item.bookTitle}</h4>
                           <div className="flex items-center justify-between">
                             <div className="w-full bg-white/5 rounded-full h-1.5 mr-3">
-                              <div className="bg-gradient-to-r from-cyan-500 to-purple-500 h-1.5 rounded-full transition-all" style={{ width: `${item.progress || 0}%` }} />
+                              <div className="bg-gradient-to-r from-cyan-500 to-sky-500 h-1.5 rounded-full transition-all" style={{ width: `${item.progress || 0}%` }} />
                             </div>
                             <span className="text-[10px] text-white/30 whitespace-nowrap">{item.progress || 0}%</span>
                           </div>
@@ -797,7 +797,7 @@ export default function TrustBook() {
                 <GlassCard>
                   <div className="p-5">
                     <div className="flex items-center gap-3 mb-4">
-                      <PenTool className="w-5 h-5 text-purple-400" />
+                      <PenTool className="w-5 h-5 text-sky-400" />
                       <h3 className="text-base font-bold text-white">Your Published Works</h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -815,7 +815,7 @@ export default function TrustBook() {
                             <p className="text-xs text-white/40 line-clamp-2 mb-2">{book.description}</p>
                             <div className="flex items-center gap-3 text-[10px] text-white/30">
                               <span>{book.genre}</span><span>·</span><span>${(book.price / 100).toFixed(2)}</span>
-                              {book.reviewNotes && <><span>·</span><span className="text-purple-400/60">Review notes</span></>}
+                              {book.reviewNotes && <><span>·</span><span className="text-sky-400/60">Review notes</span></>}
                             </div>
                           </div>
                         );
@@ -837,7 +837,7 @@ export default function TrustBook() {
               <Bot className="w-3 h-3 mr-1" /> AI Writing Assistant
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-display font-black mb-4">
-              <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Book Author Agent</span>
+              <span className="bg-gradient-to-r from-indigo-400 via-sky-400 to-pink-400 bg-clip-text text-transparent">Book Author Agent</span>
             </h2>
             <p className="text-white/50 max-w-lg mx-auto text-sm">
               Your personal AI writing coach. Get help with outlining, drafting chapters, character development, and polishing your manuscript.
@@ -923,7 +923,7 @@ export default function TrustBook() {
                         <>
                           <div className="p-4 border-b border-white/5">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/20 flex items-center justify-center">
+                              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-sky-500/20 border border-indigo-500/20 flex items-center justify-center">
                                 <Bot className="w-4 h-4 text-indigo-400" />
                               </div>
                               <div>
@@ -953,7 +953,7 @@ export default function TrustBook() {
                                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[85%] p-3 rounded-xl text-sm leading-relaxed ${
                                   msg.role === 'user'
-                                    ? 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-white border border-indigo-500/20'
+                                    ? 'bg-gradient-to-r from-indigo-500/20 to-sky-500/20 text-white border border-indigo-500/20'
                                     : 'bg-white/[0.03] text-white/80 border border-white/5'
                                 }`}>
                                   <div className="prose prose-invert prose-sm max-w-none prose-p:my-1.5 prose-headings:my-2 prose-li:my-0.5 whitespace-pre-wrap text-xs">
@@ -981,7 +981,7 @@ export default function TrustBook() {
                                 placeholder="Ask the Author Agent..."
                                 className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30" data-testid="input-chat-message" />
                               <Button size="sm" onClick={sendMessage} disabled={!chatInput.trim() || chatLoading}
-                                className="h-10 w-10 p-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl disabled:opacity-40" data-testid="button-send-message">
+                                className="h-10 w-10 p-0 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 rounded-xl disabled:opacity-40" data-testid="button-send-message">
                                 <Send className="w-4 h-4" />
                               </Button>
                             </div>
@@ -990,7 +990,7 @@ export default function TrustBook() {
                       ) : (
                         <div className="flex-1 flex items-center justify-center">
                           <div className="text-center p-8">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/15 flex items-center justify-center mx-auto mb-5">
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-sky-500/10 border border-indigo-500/15 flex items-center justify-center mx-auto mb-5">
                               <Bot className="w-8 h-8 text-indigo-400/50" />
                             </div>
                             <h3 className="text-lg font-bold text-white mb-2">Book Author Agent</h3>
@@ -1016,11 +1016,11 @@ export default function TrustBook() {
       <section id="section-publish" className="py-16 relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
-            <Badge className="mb-4 px-3 py-1.5 bg-purple-500/10 border-purple-500/30 text-purple-400 text-xs">
+            <Badge className="mb-4 px-3 py-1.5 bg-sky-500/10 border-sky-500/30 text-sky-400 text-xs">
               <Upload className="w-3 h-3 mr-1" /> Author Portal
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-display font-black mb-4">
-              <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Publish Your Truth</span>
+              <span className="bg-gradient-to-r from-sky-400 to-pink-400 bg-clip-text text-transparent">Publish Your Truth</span>
             </h2>
             <p className="text-white/50 max-w-lg mx-auto text-sm">
               Submit your manuscript for review. Approved books go live with blockchain-verified provenance. 70% royalties.
@@ -1030,8 +1030,8 @@ export default function TrustBook() {
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               {[
-                { icon: Lock, label: "Censorship-Free", desc: "Publish without fear", gradient: "from-purple-500 to-pink-600" },
-                { icon: Zap, label: "Instant Publishing", desc: "Upload and go live", gradient: "from-purple-500 to-cyan-600" },
+                { icon: Lock, label: "Censorship-Free", desc: "Publish without fear", gradient: "from-sky-500 to-pink-600" },
+                { icon: Zap, label: "Instant Publishing", desc: "Upload and go live", gradient: "from-sky-500 to-cyan-600" },
                 { icon: Globe, label: "Global Reach", desc: "Readers worldwide", gradient: "from-emerald-500 to-teal-600" },
               ].map(item => (
                 <GlassCard key={item.label}>
@@ -1061,7 +1061,7 @@ export default function TrustBook() {
                 {!showSubmitForm ? (
                   <div className="text-center mt-6">
                     <Button onClick={() => setShowSubmitForm(true)} size="lg"
-                      className="h-12 px-8 gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 shadow-2xl shadow-purple-500/25 rounded-xl" data-testid="button-open-submit-form">
+                      className="h-12 px-8 gap-2 bg-gradient-to-r from-sky-600 to-pink-600 hover:from-sky-500 hover:to-pink-500 shadow-2xl shadow-sky-500/25 rounded-xl" data-testid="button-open-submit-form">
                       <Upload className="w-5 h-5" /> Submit New Book
                     </Button>
                   </div>
@@ -1107,20 +1107,20 @@ export default function TrustBook() {
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1.5">Book Title</label>
                           <input type="text" required value={submitForm.title} onChange={(e) => setSubmitForm(f => ({ ...f, title: e.target.value }))}
-                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/30 transition-all"
+                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/30 transition-all"
                             placeholder="Enter your book title" data-testid="input-book-title" />
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1.5">Description</label>
                           <textarea required rows={4} value={submitForm.description} onChange={(e) => setSubmitForm(f => ({ ...f, description: e.target.value }))}
-                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/30 transition-all resize-none"
+                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/30 transition-all resize-none"
                             placeholder="Describe your book..." data-testid="input-book-description" />
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                           <div>
                             <label className="block text-xs font-medium text-white/60 mb-1.5">Category</label>
                             <select value={submitForm.category} onChange={(e) => setSubmitForm(f => ({ ...f, category: e.target.value, subcategory: '' }))}
-                              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500/50" data-testid="select-book-category">
+                              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500/50" data-testid="select-book-category">
                               {Object.entries(BOOK_CATEGORIES).map(([key, cat]) => (
                                 <option key={key} value={key} className="bg-slate-900">{cat.label}</option>
                               ))}
@@ -1129,7 +1129,7 @@ export default function TrustBook() {
                           <div>
                             <label className="block text-xs font-medium text-white/60 mb-1.5">Genre / Subcategory</label>
                             <select value={submitForm.subcategory} onChange={(e) => setSubmitForm(f => ({ ...f, subcategory: e.target.value, genre: e.target.value }))}
-                              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500/50" data-testid="select-book-genre">
+                              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500/50" data-testid="select-book-genre">
                               <option value="" className="bg-slate-900">Select genre...</option>
                               {BOOK_CATEGORIES[submitForm.category as keyof typeof BOOK_CATEGORIES]?.subcategories.map(sub => (
                                 <option key={sub} value={sub} className="bg-slate-900">{sub}</option>
@@ -1141,19 +1141,19 @@ export default function TrustBook() {
                           <div>
                             <label className="block text-xs font-medium text-white/60 mb-1.5">Price (cents)</label>
                             <input type="number" min="99" max="9999" value={submitForm.price} onChange={(e) => setSubmitForm(f => ({ ...f, price: e.target.value }))}
-                              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-purple-500/50 transition-all"
+                              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-sky-500/50 transition-all"
                               placeholder="499" data-testid="input-book-price" />
                             <p className="text-[10px] text-white/30 mt-1">You receive 70% — ${((parseInt(submitForm.price) || 0) * 0.7 / 100).toFixed(2)} per sale</p>
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-white/60 mb-1.5">Tags (comma separated)</label>
                             <input type="text" value={submitForm.tags} onChange={(e) => setSubmitForm(f => ({ ...f, tags: e.target.value }))}
-                              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-purple-500/50 transition-all"
+                              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-sky-500/50 transition-all"
                               placeholder="history, investigation, truth" data-testid="input-book-tags" />
                           </div>
                         </div>
                         <Button type="submit" disabled={submitting || !submitForm.title || !submitForm.description} size="lg"
-                          className="w-full h-12 gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 shadow-2xl shadow-purple-500/25 rounded-xl disabled:opacity-40" data-testid="button-submit-book">
+                          className="w-full h-12 gap-2 bg-gradient-to-r from-sky-600 to-pink-600 hover:from-sky-500 hover:to-pink-500 shadow-2xl shadow-sky-500/25 rounded-xl disabled:opacity-40" data-testid="button-submit-book">
                           {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
                           Submit for Review
                         </Button>
@@ -1173,7 +1173,7 @@ export default function TrustBook() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-display font-black mb-4">
-              <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">A Reading Experience</span>
+              <span className="bg-gradient-to-r from-cyan-400 to-sky-400 bg-clip-text text-transparent">A Reading Experience</span>
               <br /><span className="text-white">Like No Other</span>
             </h2>
           </motion.div>
@@ -1211,7 +1211,7 @@ export default function TrustBook() {
                 <GlassCard>
                   <div className="p-5 text-center">
                     <div className="flex justify-center gap-1 mb-3">
-                      {[...Array(t.rating)].map((_, j) => <Star key={j} className="w-4 h-4 text-purple-400 fill-purple-400" />)}
+                      {[...Array(t.rating)].map((_, j) => <Star key={j} className="w-4 h-4 text-sky-400 fill-sky-400" />)}
                     </div>
                     <p className="text-sm text-white/70 italic">"{t.text}"</p>
                   </div>
@@ -1226,7 +1226,7 @@ export default function TrustBook() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
             <h2 className="text-3xl sm:text-4xl font-display font-black mb-4">
-              <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Start Reading Now</span>
+              <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-pink-400 bg-clip-text text-transparent">Start Reading Now</span>
             </h2>
             <p className="text-white/50 max-w-md mx-auto mb-2">
               "Through The Veil" — 107,000 words of investigation. 52 chapters across 13 parts.
@@ -1234,12 +1234,12 @@ export default function TrustBook() {
             <p className="text-white/30 text-sm mb-8">$4.99 on Trust Book · $9.99 on Amazon</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/veil/read">
-                <Button size="lg" className="h-14 px-10 text-base gap-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-2xl shadow-cyan-500/25 rounded-xl" data-testid="button-start-reading">
+                <Button size="lg" className="h-14 px-10 text-base gap-2 bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-500 hover:to-sky-500 shadow-2xl shadow-cyan-500/25 rounded-xl" data-testid="button-start-reading">
                   <Eye className="w-5 h-5" /> Preview
                 </Button>
               </Link>
               <Link href="/veil/read">
-                <Button size="lg" className="h-14 px-10 text-base gap-2 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 shadow-2xl shadow-purple-500/25 rounded-xl" data-testid="button-buy-now-bottom">
+                <Button size="lg" className="h-14 px-10 text-base gap-2 bg-gradient-to-r from-sky-600 to-cyan-600 hover:from-sky-500 hover:to-cyan-500 shadow-2xl shadow-sky-500/25 rounded-xl" data-testid="button-buy-now-bottom">
                   <Sparkles className="w-5 h-5" /> Buy Full Book — $4.99
                 </Button>
               </Link>
