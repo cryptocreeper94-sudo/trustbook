@@ -1847,7 +1847,7 @@ export const LEGACY_FOUNDER_CONFIG = {
   ],
 } as const;
 
-export const APP_VERSION = "1.2.58";
+export const APP_VERSION = "1.2.60";
 
 export const referralTracking = pgTable("referral_tracking", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
