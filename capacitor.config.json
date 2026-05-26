@@ -1,0 +1,6 @@
+{
+  "appId": "io.tlid.trustbook",
+  "appName": "TrustBook",
+  "webDir": "dist/public",
+  "bundledWebRuntime": false
+}
