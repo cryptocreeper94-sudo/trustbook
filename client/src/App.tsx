@@ -22,12 +22,14 @@ function AppContent() {
   }
 
   return (
-    <Switch>
+    <>
       <FloatingThemeToggle />
-      <Route path="/" component={TrustBook} />
-      <Route path="/:slug/read" component={BookReader} />
-      <Route component={NotFound} />
-    </Switch>
+      <Switch>
+        <Route path="/" component={TrustBook} />
+        <Route path="/:slug/read" component={BookReader} />
+        <Route component={NotFound} />
+      </Switch>
+    </>
   );
 }
 
