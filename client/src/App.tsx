@@ -9,6 +9,7 @@ import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { FloatingThemeToggle } from "@/components/theme-toggle";
+import { BlackoutOverlay } from "@/components/BlackoutOverlay";
 
 function AppContent() {
   const { isLoading } = useAuth();
@@ -23,6 +24,7 @@ function AppContent() {
 
   return (
     <>
+      <BlackoutOverlay appName="TrustBook" />
       <FloatingThemeToggle />
       <Switch>
         <Route path="/" component={TrustBook} />
