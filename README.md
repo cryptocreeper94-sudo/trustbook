@@ -1,10 +1,48 @@
-﻿# Trust Book
+# TrustBook
 
-> $([char]0x1F512) **Patent Pending:** The core deterministic governance capabilities (Lume-V) within this repository are protected under U.S. Provisional Patent Application **No. 64/032,339** (Filed April 7, 2026).
+**Decentralized Enterprise E-Reader — cryptographically secured reading.**
 
-Publishing platform — author tools, book management, reader engagement, and digital distribution.
+Sync your entire library securely across devices without relying on third-party servers. Your highlights, notes, and reading progress are cryptographically secured on your machine.
 
-**Live:** [trustbook.tlid.io](https://trustbook.tlid.io)
+🌐 **Live**: [trustbook.tlid.io](https://trustbook.tlid.io)
+
+---
+
+## Downloads
+
+| Platform | Link |
+|----------|------|
+| 🖥️ Windows | Coming Soon |
+| 📱 Android | Coming Soon |
+
+🏪 Google Play & Apple App Store — Coming Soon
+
+## Features
+
+- 📚 **Universal E-Reader** — Support for EPUB, PDF, and plain text with a beautiful, distraction-free reading UI
+- 🔐 **Cryptographic Sync** — Library synced via Ed25519 signed packages, no third-party cloud dependency
+- 📝 **Highlights & Notes** — Full annotation system with export and search
+- 📊 **Reading Analytics** — Track reading speed, completion rates, and daily goals
+- 🛡️ **Trust Layer Sealed** — Reading progress and annotations anchored to the TLL for provenance
+- 🖥️ **Desktop App** — Full Electron-based reader for Windows
+- 📱 **Mobile App** — Native Android companion with touch-optimized reading
+
+## Tech Stack
+
+| Layer | Tech |
+|---|---|
+| Frontend | React 19 + Vite 7 |
+| Backend | Express + TypeScript |
+| Database | PostgreSQL (Drizzle ORM) |
+| Auth | Trust Layer SSO |
+| Deploy | Render |
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
 
 ## Lume-OS Integration
 
@@ -14,21 +52,7 @@ This application is registered with **Lume Cortex** — the deterministic meta-o
 |---|---|
 | **Cortex Bridge** | `cortex-bridge.js` |
 | **Lume-V Wrapper** | `lume-v.wrapper.lume` |
-| **Ecosystem** | trust-layer-42 (42 apps · 42 papers) |
-| **Cortex Endpoint** | lume-cortex.onrender.com |
-
-## Stack
-
-| Layer | Tech |
-|---|---|
-| React 19 + Vite 7 | | Express + TypeScript | | PostgreSQL (Drizzle ORM) | | Trust Layer SSO | | Render |
-
-## Development
-
-``bash
-npm install
-npm run dev
-``
+| **Ecosystem** | trust-layer-42 |
 
 ---
 
